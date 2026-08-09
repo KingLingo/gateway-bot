@@ -178,7 +178,7 @@ onMounted(() => appStore.fetchPublicSettings())
   color: #242521;
 }
 
-:global(.dark) .auth-panel {
+:global(.dark .auth-panel) {
   background: #131a17;
   color: #f2f0ea;
 }

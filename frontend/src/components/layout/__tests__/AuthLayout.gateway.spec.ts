@@ -23,4 +23,9 @@ describe('Gateway Bot authentication shell', () => {
     expect(source).toContain("appStore.siteName || 'Gateway Bot'")
     expect(source).toContain('保留所有权利')
   })
+
+  it('keeps the dark theme selector scoped to the authentication panel', () => {
+    expect(source).toContain(':global(.dark .auth-panel)')
+    expect(source).not.toContain(':global(.dark) .auth-panel')
+  })
 })
