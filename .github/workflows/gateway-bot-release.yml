@@ -1,0 +1,126 @@
+name: Gateway Bot Release
+
+on:
+  push:
+    tags:
+      - 'gateway-bot-v*-r*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '已存在的 Gateway Bot 发布标签，例如 gateway-bot-v0.1.173-r1'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve release tag
+        id: release
+        env:
+          DISPATCH_TAG: ${{ inputs.tag }}
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            TAG="${DISPATCH_TAG}"
+          else
+            TAG="${GITHUB_REF_NAME}"
+          fi
+          if ! printf '%s' "${TAG}" | grep -Eq '^gateway-bot-v[0-9]+\.[0-9]+\.[0-9]+-r[0-9]+$'; then
+            echo "Unsupported release tag: ${TAG}" >&2
+            exit 1
+          fi
+          echo "tag=${TAG}" >> "${GITHUB_OUTPUT}"
+          echo "version=${TAG#gateway-bot-v}" >> "${GITHUB_OUTPUT}"
+
+      - name: Checkout release
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ steps.release.outputs.tag }}
+
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify frontend
+        working-directory: frontend
+        run: |
+          pnpm run lint:check
+          pnpm run typecheck
+          pnpm run test:run
+          pnpm run build
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: backend/go.mod
+          check-latest: false
+          cache-dependency-path: backend/go.sum
+
+      - name: Verify backend
+        working-directory: backend
+        run: go test ./...
+
+      - name: Build Linux amd64 release
+        working-directory: backend
+        env:
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          COMMIT="$(git rev-parse --short=12 HEAD)"
+          BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+            -tags embed \
+            -trimpath \
+            -ldflags="-s -w -X main.Version=${RELEASE_VERSION} -X main.Commit=${COMMIT} -X main.Date=${BUILD_DATE} -X main.BuildType=release" \
+            -o gateway-bot_linux_amd64 \
+            ./cmd/server
+          tar -czf gateway-bot_linux_amd64.tar.gz gateway-bot_linux_amd64
+          sha256sum gateway-bot_linux_amd64 gateway-bot_linux_amd64.tar.gz > checksums.txt
+
+      - name: Upload verified artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: gateway-bot_linux_amd64
+          path: |
+            backend/gateway-bot_linux_amd64
+            backend/gateway-bot_linux_amd64.tar.gz
+            backend/checksums.txt
+          if-no-files-found: error
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          if gh release view "${RELEASE_TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            gh release upload "${RELEASE_TAG}" \
+              backend/gateway-bot_linux_amd64 \
+              backend/gateway-bot_linux_amd64.tar.gz \
+              backend/checksums.txt \
+              --repo "${GITHUB_REPOSITORY}" \
+              --clobber
+          else
+            gh release create "${RELEASE_TAG}" \
+              backend/gateway-bot_linux_amd64 \
+              backend/gateway-bot_linux_amd64.tar.gz \
+              backend/checksums.txt \
+              --repo "${GITHUB_REPOSITORY}" \
+              --title "Gateway Bot ${RELEASE_TAG}" \
+              --generate-notes \
+              --verify-tag
+          fi

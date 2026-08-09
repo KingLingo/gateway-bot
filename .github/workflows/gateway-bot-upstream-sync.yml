@@ -1,0 +1,55 @@
+name: Gateway Bot Upstream Sync
+
+on:
+  schedule:
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  open-sync-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Gateway Bot
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Merge latest upstream into a review branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          git config user.name "gateway-bot-sync[bot]"
+          git config user.email "gateway-bot-sync[bot]@users.noreply.github.com"
+          git remote add upstream https://github.com/Wei-Shaw/sub2api.git
+          git fetch upstream main --tags
+
+          UPSTREAM_SHA="$(git rev-parse upstream/main)"
+          SHORT_SHA="$(git rev-parse --short=12 upstream/main)"
+          BRANCH="sync/upstream-${SHORT_SHA}"
+
+          if git merge-base --is-ancestor "${UPSTREAM_SHA}" HEAD; then
+            echo "Gateway Bot already contains upstream ${SHORT_SHA}."
+            exit 0
+          fi
+
+          if gh pr list --repo "${GITHUB_REPOSITORY}" --state open --json headRefName \
+            --jq ".[] | select(.headRefName == \"${BRANCH}\")" | grep -q .; then
+            echo "Sync PR for ${SHORT_SHA} already exists."
+            exit 0
+          fi
+
+          git switch -c "${BRANCH}"
+          git merge --no-ff --no-edit upstream/main
+          git push origin "${BRANCH}"
+          gh pr create \
+            --repo "${GITHUB_REPOSITORY}" \
+            --base "${BASE_BRANCH}" \
+            --head "${BRANCH}" \
+            --title "chore: sync upstream ${SHORT_SHA}" \
+            --body "自动合并 Wei-Shaw/sub2api 的最新 main。请重点复核 Gateway Bot 品牌、中文文案、订阅优先级和全部 UI 页面；此 PR 不会自动合并。"
