@@ -52,4 +52,21 @@ describe('AppSidebar header styles', () => {
     expect(sidebarHeaderBlockMatch?.[0]).not.toContain('@apply overflow-hidden;')
     expect(sidebarBrandBlockMatch?.[0]).not.toContain('overflow: hidden;')
   })
+
+  it('uses the compact Gateway Bot product shell without legacy logo treatment', () => {
+    expect(componentSource).toContain("sidebarCollapsed ? 'w-[72px]' : 'w-[248px]'")
+    expect(componentSource).toContain('Gateway Bot')
+    expect(componentSource).not.toContain("'/logo.svg'")
+    expect(componentSource).not.toContain('shadow-glow')
+  })
+
+  it('keeps the app canvas flat and free of the legacy mesh background', () => {
+    const appLayoutSource = readFileSync(
+      resolve(dirname(fileURLToPath(import.meta.url)), '../AppLayout.vue'),
+      'utf8',
+    )
+
+    expect(appLayoutSource).toContain("'lg:ml-[248px]'")
+    expect(appLayoutSource).not.toContain('bg-mesh-gradient')
+  })
 })

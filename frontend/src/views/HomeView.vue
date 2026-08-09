@@ -19,7 +19,10 @@
       :to="dashboardPath"
       class="group flex max-w-lg items-center gap-5 border-l border-primary-500 py-4 pl-5"
     >
-      <span class="brand-mark">G</span>
+      <span class="brand-mark">
+        <img v-if="siteLogo" :src="siteLogo" alt="" />
+        <span v-else>G</span>
+      </span>
       <span>
         <span class="block text-2xl font-semibold">{{ siteName }}</span>
         <span class="mt-1 block text-sm text-dark-400">{{ t('home.compactHint') }}</span>
@@ -31,7 +34,10 @@
   <div v-else data-testid="gateway-home" class="gateway-home">
     <header class="home-nav">
       <RouterLink to="/home" class="brand-wordmark" aria-label="Gateway Bot 首页">
-        <span class="brand-mark">G</span>
+        <span class="brand-mark">
+          <img v-if="siteLogo" :src="siteLogo" alt="" />
+          <span v-else>G</span>
+        </span>
         <span class="brand-name"><strong>Gateway</strong><em>Bot</em></span>
       </RouterLink>
 
@@ -207,6 +213,7 @@ const appStore = useAppStore()
 const authStore = useAuthStore()
 
 const siteName = computed(() => appStore.cachedPublicSettings?.site_name || appStore.siteName || 'Gateway Bot')
+const siteLogo = computed(() => sanitizeUrl(appStore.cachedPublicSettings?.site_logo || appStore.siteLogo || '', { allowRelative: true, allowDataUrl: true }))
 const docUrl = computed(() => sanitizeUrl(appStore.cachedPublicSettings?.doc_url || appStore.docUrl || ''))
 const homeContent = computed(() => appStore.cachedPublicSettings?.home_content || '')
 const hasHomeContent = computed(() => homeContent.value.trim().length > 0)
@@ -294,6 +301,7 @@ onMounted(() => {
   color: #69b086;
   font-weight: 700;
 }
+.brand-mark img { height: 100%; width: 100%; object-fit: contain; }
 .brand-name { gap: 0.28rem; font-size: 0.95rem; font-style: normal; }
 .brand-name strong { font-weight: 620; }
 .brand-name em { color: #69b086; font-style: normal; font-weight: 620; }

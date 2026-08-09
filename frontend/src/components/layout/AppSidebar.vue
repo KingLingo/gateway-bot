@@ -2,27 +2,28 @@
   <aside
     class="sidebar"
     :class="[
-      sidebarCollapsed ? 'w-[72px]' : 'w-64',
+      sidebarCollapsed ? 'w-[72px]' : 'w-[248px]',
       { '-translate-x-full lg:translate-x-0': !mobileOpen }
     ]"
   >
-    <!-- Logo/Brand -->
+    <!-- Gateway Bot wordmark -->
     <div class="sidebar-header" :class="{ 'sidebar-header-collapsed': sidebarCollapsed }">
-      <!-- Custom Logo or Default Logo -->
       <router-link
         :to="homePath"
-        class="sidebar-logo flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl shadow-glow transition-opacity hover:opacity-80"
+        class="sidebar-logo flex h-9 w-9 items-center justify-center overflow-hidden rounded-[4px] border border-white/15 bg-primary-500 text-xs font-bold text-dark-950 transition-colors hover:bg-primary-400"
+        aria-label="Gateway Bot"
         @click="handleMenuItemClick(homePath)"
       >
-        <img v-if="settingsLoaded" :src="siteLogo || '/logo.svg'" alt="Logo" class="h-full w-full object-contain" />
+        <img v-if="settingsLoaded && siteLogo" :src="siteLogo" alt="" class="h-full w-full object-contain" />
+        <span v-else>GB</span>
       </router-link>
       <div class="sidebar-brand" :class="{ 'sidebar-brand-collapsed': sidebarCollapsed }" :aria-hidden="sidebarCollapsed ? 'true' : 'false'">
         <router-link
           :to="homePath"
-          class="sidebar-brand-title text-lg font-bold text-gray-900 transition-colors hover:text-primary-600 dark:text-white dark:hover:text-primary-400"
+          class="sidebar-brand-title text-base font-semibold text-white transition-colors hover:text-primary-300"
           @click="handleMenuItemClick(homePath)"
         >
-          {{ siteName }}
+          {{ siteName || 'Gateway Bot' }}
         </router-link>
       </div>
     </div>
