@@ -67,6 +67,7 @@ const channels = ref<UserAvailableChannel[]>([])
 const userGroupRates = ref<Record<number, number>>({})
 const loading = ref(false)
 const searchQuery = ref('')
+const CUSTOMER_VISIBLE_PLATFORMS = new Set(['openai', 'anthropic'])
 
 const columnLabels = computed(() => ({
   name: t('availableChannels.columns.name'),
@@ -82,10 +83,20 @@ const columnLabels = computed(() => ({
  * - 否则按 platform/group/model 维度在 sections 里过滤，保留有匹配的 section
  * - 所有 sections 都不匹配时，渠道本身被过滤掉
  */
+const customerChannels = computed(() =>
+  channels.value
+    .map((channel) => ({
+      ...channel,
+      platforms: channel.platforms.filter((section) => CUSTOMER_VISIBLE_PLATFORMS.has(section.platform)),
+    }))
+    .filter((channel) => channel.platforms.length > 0)
+)
+
 const filteredChannels = computed(() => {
+  const visibleChannels = customerChannels.value
   const q = searchQuery.value.trim().toLowerCase()
-  if (!q) return channels.value
-  return channels.value
+  if (!q) return visibleChannels
+  return visibleChannels
     .map((ch) => {
       const nameHit = ch.name.toLowerCase().includes(q)
       const descHit = (ch.description || '').toLowerCase().includes(q)

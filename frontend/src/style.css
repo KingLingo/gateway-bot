@@ -3,18 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --gb-canvas: #f5f3ed;
-  --gb-surface: #fcfbf7;
-  --gb-surface-muted: #f0eee7;
-  --gb-border: #d8d5cc;
-  --gb-text: #242521;
-  --gb-text-muted: #70736b;
-  --gb-brand: #1f6b4a;
-  --gb-canvas-dark: #0f1512;
-  --gb-surface-dark: #171f1b;
-  --gb-border-dark: #303c35;
-  --gb-text-dark: #f2f0ea;
-  --gb-text-muted-dark: #94a198;
+  --gb-canvas: #F4F6F8;
+  --gb-surface: #FFFFFF;
+  --gb-surface-muted: #EEF0F2;
+  --gb-border: #DDE1E5;
+  --gb-text: #17191C;
+  --gb-text-muted: #66707A;
+  --gb-brand: #405647;
+  --gb-canvas-dark: #0B0D0F;
+  --gb-surface-dark: #16191C;
+  --gb-border-dark: #32393F;
+  --gb-text-dark: #F5F7F8;
+  --gb-text-muted-dark: #9DA6AE;
 }
 
 @layer base {
@@ -30,6 +30,7 @@
     @apply min-h-screen bg-paper font-sans text-gray-900 dark:bg-dark-950 dark:text-dark-50;
     font-variant-numeric: tabular-nums;
     text-rendering: optimizeLegibility;
+    letter-spacing: 0;
   }
 
   button,
@@ -95,7 +96,7 @@
   /* ============ 按钮样式 ============ */
   .btn {
     @apply inline-flex items-center justify-center gap-2;
-    @apply rounded-[4px] px-4 py-2.5 text-sm font-semibold;
+    @apply rounded-[6px] px-4 py-2.5 text-sm font-semibold;
     @apply transition duration-150 ease-out;
     @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600/50 focus-visible:ring-offset-2;
     @apply disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50;
@@ -162,24 +163,24 @@
   }
 
   .btn-sm {
-    @apply rounded-[4px] px-3 py-1.5 text-xs;
+    @apply rounded-[6px] px-3 py-1.5 text-xs;
   }
 
   .btn-md {
-    @apply rounded-[4px] px-4 py-2 text-sm;
+    @apply rounded-[6px] px-4 py-2 text-sm;
   }
 
   .btn-lg {
-    @apply rounded-[4px] px-6 py-3 text-base;
+    @apply rounded-[6px] px-6 py-3 text-base;
   }
 
   .btn-icon {
-    @apply rounded-[4px] p-2.5;
+    @apply rounded-[6px] p-2.5;
   }
 
   /* ============ 输入框样式 ============ */
   .input {
-    @apply w-full rounded-[4px] px-3.5 py-2.5 text-sm;
+    @apply w-full rounded-[6px] px-3.5 py-2.5 text-sm;
     @apply bg-surface dark:bg-dark-800;
     @apply border border-gray-200 dark:border-dark-600;
     @apply text-gray-900 dark:text-gray-100;
@@ -226,13 +227,25 @@
 
   /* ============ 玻璃效果 ============ */
   .glass {
-    @apply bg-white/80 backdrop-blur-xl dark:bg-dark-800/80;
+    @apply border border-white/60 bg-white/70 backdrop-blur-xl dark:border-white/10 dark:bg-dark-800/75;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.48);
   }
+
+  /* Web approximation of frosted iOS material. Keep dense data surfaces solid. */
+  .glass-nav,
+  .glass-emphasis,
+  .glass-dialog {
+    @apply border border-white/60 bg-white/70 backdrop-blur-xl dark:border-white/10 dark:bg-dark-800/75;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5), 0 12px 36px rgb(20 24 28 / 0.1);
+  }
+
+  .glass-nav { @apply bg-white/80 dark:bg-dark-900/80; }
+  .glass-emphasis { @apply bg-white/70 dark:bg-dark-800/70; }
 
   .glass-card {
     @apply bg-surface/90 dark:bg-dark-800/90;
     @apply backdrop-blur-xl;
-    @apply rounded-[6px];
+    @apply rounded-[8px];
     @apply border border-gray-200 dark:border-dark-700;
     @apply shadow-glass;
     @apply transition duration-200;
@@ -240,7 +253,7 @@
 
   /* ============ 卡片样式 ============ */
   .card {
-    @apply rounded-[6px] border border-gray-200 bg-surface dark:border-dark-700 dark:bg-dark-800;
+    @apply rounded-[8px] border border-gray-200 bg-surface dark:border-dark-700 dark:bg-dark-800;
     @apply shadow-none transition duration-150;
   }
 
@@ -409,8 +422,7 @@
   .modal-content {
     @apply w-full;
     @apply max-h-[95vh] sm:max-h-[90vh];
-    @apply bg-surface dark:bg-dark-800;
-    @apply rounded-[6px] shadow-2xl;
+    @apply glass-dialog rounded-[8px] shadow-2xl;
     @apply border border-gray-200 dark:border-dark-700;
     @apply flex flex-col;
   }
@@ -502,7 +514,7 @@
   .dialog-container {
     @apply flex w-full flex-col;
     @apply max-h-[90vh];
-    @apply rounded-[6px] bg-surface dark:bg-dark-800;
+    @apply glass-dialog rounded-[8px];
     @apply shadow-xl;
   }
 
@@ -797,5 +809,27 @@
     animation-duration: 1ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 1ms !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass,
+  .glass-nav,
+  .glass-emphasis,
+  .glass-dialog,
+  .glass-card,
+  .card-glass {
+    background: var(--gb-surface) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .dark .glass,
+  .dark .glass-nav,
+  .dark .glass-emphasis,
+  .dark .glass-dialog,
+  .dark .glass-card,
+  .dark .card-glass {
+    background: var(--gb-surface-dark) !important;
   }
 }

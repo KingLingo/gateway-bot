@@ -25,4 +25,8 @@ describe('Gateway Bot home experience', () => {
   it('keeps documentation conditional on the configured URL', () => {
     expect(source).toMatch(/v-if="docUrl"[\s\S]{0,240}:href="docUrl"/)
   })
+
+  it('hides the nested brand wordmark below the tablet breakpoint', () => {
+    expect(source).toContain(':deep(.brand-name) { display: none; }')
+  })
 })

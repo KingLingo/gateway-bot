@@ -84,6 +84,12 @@ const OAuthAuthorizationFlowStub = defineComponent({
   `,
 })
 
+const PlatformIconStub = defineComponent({
+  name: 'PlatformIcon',
+  props: { platform: { type: String, required: true } },
+  template: '<span data-testid="platform-icon" :data-platform="platform" />',
+})
+
 function mountModal() {
   return mount(CreateAccountModal, {
     props: { show: true, proxies: [], groups: [] },
@@ -94,7 +100,7 @@ function mountModal() {
         ConfirmDialog: true,
         Select: true,
         Icon: true,
-        PlatformIcon: true,
+        PlatformIcon: PlatformIconStub,
         ProxySelector: true,
         ProxyAdBanner: true,
         GroupSelector: true,
@@ -264,29 +270,14 @@ describe('CreateAccountModal OpenAI long-context billing', () => {
     expect(createAccountMock.mock.calls[0]?.[0]?.upstream_billing_probe_enabled).toBe(false)
   })
 
-  it('antigravity upstream 创建默认携带上游倍率探测开关', async () => {
-    // antigravity upstream 走独立创建 helper，
-    // 也必须与其余 API-key 平台一样默认开启探测并传递开关。
+  it('新建账号入口仅提供 OpenAI 与 Anthropic', async () => {
     const wrapper = mountModal()
-    await selectButtonByText(wrapper, 'Antigravity')
-    await selectButtonByText(wrapper, 'admin.accounts.types.antigravityApikey')
-    await wrapper.get('form#create-account-form input[type="text"]').setValue('antigravity relay')
-    const baseInput = wrapper
-      .findAll('input')
-      .find((candidate) => candidate.attributes('placeholder') === 'https://cloudcode-pa.googleapis.com')
-    expect(baseInput).toBeDefined()
-    await baseInput?.setValue('https://relay.example')
-    await wrapper.get('form#create-account-form input[type="password"]').setValue('sk-upstream')
-    await wrapper.get('form#create-account-form').trigger('submit.prevent')
-    await flushPromises()
 
-    expect(createAccountMock).toHaveBeenCalledTimes(1)
-    const payload = createAccountMock.mock.calls[0]?.[0]
-    expect(payload?.platform).toBe('antigravity')
-    expect(payload?.type).toBe('apikey')
-    expect(payload?.upstream_billing_probe_enabled).toBe(true)
-    // 创建成功后前端立即发起一次首探（与其他 apikey 平台一致）。
-    expect(probeUpstreamBillingMock).toHaveBeenCalledWith(42)
+    expect(wrapper.find('[data-testid="platform-openai"]').exists()).toBe(true)
+    expect(wrapper.find('[data-testid="platform-anthropic"]').exists()).toBe(true)
+    expect(wrapper.text()).not.toContain('Gemini')
+    expect(wrapper.text()).not.toContain('Grok')
+    expect(wrapper.text()).not.toContain('Antigravity')
   })
 
   it('leaves Codex session import billing ownership to the backend', async () => {
@@ -337,5 +328,18 @@ describe('CreateAccountModal OpenAI long-context billing', () => {
     await flushPromises()
 
     expect(createOpenAICodexPATMock.mock.calls[0]?.[0]?.extra?.openai_long_context_billing_enabled).toBe(false)
+  })
+})
+
+describe('CreateAccountModal platform selector', () => {
+  it('renders PlatformIcon for the OpenAI and Anthropic platform options', () => {
+    const wrapper = mountModal()
+
+    expect(
+      wrapper.get('[data-testid="platform-anthropic"] [data-testid="platform-icon"]').attributes('data-platform')
+    ).toBe('anthropic')
+    expect(
+      wrapper.get('[data-testid="platform-openai"] [data-testid="platform-icon"]').attributes('data-platform')
+    ).toBe('openai')
   })
 })

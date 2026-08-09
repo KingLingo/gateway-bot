@@ -6,15 +6,7 @@
       <!-- 左:站点 logo + 名称 -->
       <div class="flex min-w-0 items-center gap-3">
         <template v-if="settings">
-          <span
-            class="flex h-9 w-9 flex-shrink-0 items-center justify-center overflow-hidden rounded-[4px] border border-primary-500/40 bg-dark-950 text-[11px] font-bold text-primary-400"
-          >
-            <img v-if="siteLogo" :src="siteLogo" alt="" class="h-full w-full object-contain" />
-            <span v-else>GB</span>
-          </span>
-          <span class="truncate text-base font-semibold text-gray-950 dark:text-white">
-            {{ siteName }}
-          </span>
+          <GatewayBrand :logo="siteLogo" :name="siteName" />
         </template>
         <template v-else>
           <span class="h-9 w-9 flex-shrink-0 animate-pulse rounded-[6px] bg-gray-200 dark:bg-dark-700" aria-hidden="true"></span>
@@ -47,6 +39,7 @@ import { useI18n } from 'vue-i18n'
 import { sanitizeUrl } from '@/utils/url'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
+import GatewayBrand from '@/components/brand/GatewayBrand.vue'
 
 const { t } = useI18n()
 const appStore = useAppStore()

@@ -4,13 +4,7 @@
       <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
         <RouterLink to="/home" class="flex min-w-0 items-center gap-3">
           <template v-if="settings">
-            <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-[4px] border border-primary-500/40 bg-dark-950 text-xs font-bold text-primary-400">
-              <img v-if="siteLogo" :src="siteLogo" alt="" class="h-full w-full object-contain" />
-              <span v-else>GB</span>
-            </span>
-            <span class="truncate text-base font-semibold text-gray-950 dark:text-white">
-              {{ siteName }}
-            </span>
+            <GatewayBrand :logo="siteLogo" :name="siteName" />
           </template>
           <template v-else>
             <span class="h-10 w-10 flex-shrink-0 animate-pulse rounded-[6px] bg-gray-200 dark:bg-dark-700" aria-hidden="true"></span>
@@ -97,6 +91,7 @@ import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import { useI18n } from 'vue-i18n'
 import Icon from '@/components/icons/Icon.vue'
+import GatewayBrand from '@/components/brand/GatewayBrand.vue'
 import { getLocale } from '@/i18n'
 import { sanitizeUrl } from '@/utils/url'
 import { useAppStore } from '@/stores/app'

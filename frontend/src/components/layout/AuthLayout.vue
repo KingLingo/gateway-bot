@@ -9,9 +9,7 @@
       />
       <div class="auth-context-shade" />
       <RouterLink to="/home" class="auth-brand" aria-label="返回首页">
-        <span v-if="!siteLogo" class="auth-mark">G</span>
-        <img v-else :src="siteLogo" alt="" class="auth-custom-logo" />
-        <span><strong>Gateway</strong><em>Bot</em></span>
+        <GatewayBrand :logo="siteLogo" :name="siteName" mark-class="auth-mark" name-class="auth-brand-name" />
       </RouterLink>
       <div class="auth-context-copy">
         <p>AI API 订阅服务</p>
@@ -24,9 +22,7 @@
     <main class="auth-panel">
       <div class="auth-mobile-brand">
         <RouterLink to="/home" class="auth-brand">
-          <span v-if="!siteLogo" class="auth-mark">G</span>
-          <img v-else :src="siteLogo" alt="" class="auth-custom-logo" />
-          <span>{{ siteName }}</span>
+          <GatewayBrand :logo="siteLogo" :name="siteName" mark-class="auth-mark" />
         </RouterLink>
       </div>
 
@@ -50,6 +46,7 @@
 import { computed, onMounted } from 'vue'
 import { useAppStore } from '@/stores'
 import { sanitizeUrl } from '@/utils/url'
+import GatewayBrand from '@/components/brand/GatewayBrand.vue'
 
 const appStore = useAppStore()
 const siteName = computed(() => appStore.siteName || 'Gateway Bot')
@@ -65,7 +62,7 @@ onMounted(() => appStore.fetchPublicSettings())
   display: grid;
   min-height: 100dvh;
   grid-template-columns: minmax(340px, 0.88fr) minmax(520px, 1.12fr);
-  background: #f5f3ed;
+  background: #F4F6F8;
 }
 
 .auth-context {
@@ -73,8 +70,8 @@ onMounted(() => appStore.fetchPublicSettings())
   top: 0;
   min-height: 100dvh;
   overflow: hidden;
-  background: #0f1512;
-  color: #f2f0ea;
+  background: #0B0D0F;
+  color: #F5F7F8;
 }
 
 .auth-context-image,
@@ -87,11 +84,11 @@ onMounted(() => appStore.fetchPublicSettings())
 
 .auth-context-image {
   object-fit: cover;
-  filter: saturate(0.35) contrast(1.08) brightness(0.62) sepia(0.14) hue-rotate(72deg);
+  filter: saturate(0.2) contrast(1.08) brightness(0.62);
 }
 
 .auth-context-shade {
-  background: linear-gradient(180deg, rgb(15 21 18 / 0.62), rgb(15 21 18 / 0.94));
+  background: linear-gradient(180deg, rgb(11 13 15 / 0.62), rgb(11 13 15 / 0.94));
 }
 
 .auth-brand {
@@ -108,24 +105,19 @@ onMounted(() => appStore.fetchPublicSettings())
   margin: 2rem;
 }
 
-.auth-brand em {
-  margin-left: 0.25rem;
-  color: #69b086;
-  font-style: normal;
-}
-
-.auth-mark,
+:deep(.auth-mark),
 .auth-custom-logo {
   display: inline-flex;
   height: 2rem;
   width: 2rem;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgb(105 176 134 / 0.7);
-  border-radius: 4px;
-  color: #69b086;
+  border: 1px solid rgb(151 177 157 / 0.5);
+  border-radius: 6px;
   object-fit: contain;
 }
+
+:deep(.auth-brand-name) { color: #F5F7F8; }
 
 .auth-context-copy {
   position: absolute;
@@ -136,7 +128,7 @@ onMounted(() => appStore.fetchPublicSettings())
 }
 
 .auth-context-copy > p {
-  color: #69b086;
+  color: #88A18E;
   font-size: 0.78rem;
 }
 
@@ -151,7 +143,7 @@ onMounted(() => appStore.fetchPublicSettings())
   display: block;
   margin-top: 1.5rem;
   max-width: 28rem;
-  color: #94a198;
+  color: #9DA6AE;
   line-height: 1.7;
 }
 
@@ -161,9 +153,9 @@ onMounted(() => appStore.fetchPublicSettings())
   right: 2rem;
   bottom: 2rem;
   left: 2rem;
-  border-top: 1px solid #303c35;
+  border-top: 1px solid #353C42;
   padding-top: 1rem;
-  color: #77847c;
+  color: #89929A;
   font-size: 0.72rem;
 }
 
@@ -175,12 +167,13 @@ onMounted(() => appStore.fetchPublicSettings())
   align-items: center;
   justify-content: center;
   padding: 5rem clamp(2rem, 7vw, 8rem);
-  color: #242521;
+  background: #F4F6F8;
+  color: #17191C;
 }
 
 :global(.dark .auth-panel) {
-  background: #131a17;
-  color: #f2f0ea;
+  background: #0B0D0F;
+  color: #F5F7F8;
 }
 
 .auth-form-wrap {
@@ -189,8 +182,17 @@ onMounted(() => appStore.fetchPublicSettings())
 }
 
 .auth-form-surface {
-  border-top: 2px solid #1f6b4a;
-  padding-top: 2rem;
+  border: 1px solid rgb(93 105 114 / 0.22);
+  border-top: 2px solid #526E59;
+  border-radius: 8px;
+  background: rgb(255 255 255 / 0.72);
+  backdrop-filter: blur(16px);
+  padding: 2rem;
+}
+
+:global(.dark .auth-form-surface) {
+  border-color: rgb(157 166 174 / 0.24);
+  background: rgb(22 25 28 / 0.74);
 }
 
 .auth-footer-links {
@@ -202,7 +204,7 @@ onMounted(() => appStore.fetchPublicSettings())
 .auth-copyright {
   position: absolute;
   bottom: 1.5rem;
-  color: #969990;
+  color: #66707A;
   font-size: 0.7rem;
 }
 

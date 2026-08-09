@@ -4,11 +4,7 @@
     <header class="relative z-20 px-6 py-4">
       <nav class="mx-auto flex max-w-6xl items-center justify-between">
         <router-link to="/home" class="flex items-center gap-3">
-          <div class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-[4px] border border-primary-500/40 bg-dark-950 text-xs font-bold text-primary-400">
-            <img v-if="siteLogo" :src="siteLogo" alt="" class="h-full w-full object-contain" />
-            <span v-else>GB</span>
-          </div>
-          <span class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">{{ siteName }}</span>
+          <GatewayBrand :logo="siteLogo" :name="siteName" />
         </router-link>
         <div class="flex items-center gap-3">
           <LocaleSwitcher />
@@ -417,6 +413,7 @@ import { useI18n } from 'vue-i18n'
 import { useAppStore } from '@/stores'
 import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
 import Icon from '@/components/icons/Icon.vue'
+import GatewayBrand from '@/components/brand/GatewayBrand.vue'
 import { buildGatewayUrl } from '@/api/client'
 import { formatDateLocalInput } from '@/utils/format'
 import { sanitizeUrl } from '@/utils/url'

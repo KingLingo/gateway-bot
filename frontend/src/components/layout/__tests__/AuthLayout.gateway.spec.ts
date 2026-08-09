@@ -28,4 +28,16 @@ describe('Gateway Bot authentication shell', () => {
     expect(source).toContain(':global(.dark .auth-panel)')
     expect(source).not.toContain(':global(.dark) .auth-panel')
   })
+
+  it('uses cold graphite tokens and a targeted glass form emphasis', () => {
+    expect(source).toContain('background: #F4F6F8')
+    expect(source).toContain('background: #0B0D0F')
+    expect(source).toContain('border-top: 2px solid #526E59')
+    expect(source).toContain('background: rgb(255 255 255 / 0.72)')
+    expect(source).toContain(':deep(.auth-mark)')
+    expect(source).toContain(':deep(.auth-brand-name)')
+    expect(source).not.toContain('#f5f3ed')
+    expect(source).not.toContain('#0f1512')
+    expect(source).not.toContain('#69b086')
+  })
 })

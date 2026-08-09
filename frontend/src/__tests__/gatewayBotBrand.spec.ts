@@ -88,4 +88,40 @@ describe('Gateway Bot public brand', () => {
     expect(sidebar).not.toContain('<VersionBadge')
     expect(sidebar).not.toContain("import VersionBadge")
   })
+
+  it('ships the original gateway-frame mark and reuses it for every default shell logo', () => {
+    const logo = readFileSync(resolve(repoRoot, 'frontend/public/logo.svg'), 'utf8')
+    const brand = readFileSync(resolve(srcRoot, 'components/brand/GatewayBrand.vue'), 'utf8')
+    const defaultBrandShells = [
+      'views/HomeView.vue',
+      'views/KeyUsageView.vue',
+      'views/public/LegalDocumentView.vue',
+      'components/layout/AuthLayout.vue',
+      'components/layout/AppSidebar.vue',
+      'components/modelPlaza/PlazaNavBar.vue',
+    ]
+
+    expect(logo).toContain('<title id="title">Gateway Bot</title>')
+    expect(logo).toContain('gateway frames, a routing path, and an online status point')
+    expect(logo).not.toContain('Sub2API')
+    expect(brand).toContain("src=\"/logo.svg\"")
+    expect(brand).toContain('v-if="logo"')
+
+    for (const file of defaultBrandShells) {
+      expect(readFileSync(resolve(srcRoot, file), 'utf8'), file).toContain('<GatewayBrand')
+    }
+  })
+
+  it('uses the Apple-native type stack and cold silver Apple Glass tokens', () => {
+    const styles = readFileSync(resolve(srcRoot, 'style.css'), 'utf8')
+    const tailwind = readFileSync(resolve(repoRoot, 'frontend/tailwind.config.js'), 'utf8')
+
+    expect(styles).toContain('--gb-canvas: #F4F6F8')
+    expect(styles).toContain('--gb-canvas-dark: #0B0D0F')
+    expect(styles).toContain('prefers-reduced-transparency: reduce')
+    expect(styles).toContain('.glass-nav')
+    expect(tailwind).toContain("'-apple-system'")
+    expect(tailwind).toContain("'SF Pro Display'")
+    expect(tailwind).toContain("'PingFang SC'")
+  })
 })

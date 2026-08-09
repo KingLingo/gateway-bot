@@ -9,13 +9,14 @@ const tailwindSource = readFileSync(resolve(frontendRoot, 'tailwind.config.js'),
 const styleSource = readFileSync(resolve(frontendRoot, 'src/style.css'), 'utf8')
 
 describe('Gateway Bot design system', () => {
-  it('defines the approved olive, paper, and clay palette', () => {
-    expect(tailwindSource).toContain("500: '#69B086'")
-    expect(tailwindSource).toContain("950: '#0F1512'")
-    expect(tailwindSource).toContain("paper: '#F5F3ED'")
-    expect(tailwindSource).toContain("clay: '#C76D4E'")
-    expect(styleSource).toContain('--gb-surface: #fcfbf7')
-    expect(styleSource).toContain('--gb-surface-dark: #171f1b')
+  it('defines the approved cold silver, graphite, and restrained moss palette', () => {
+    expect(tailwindSource).toContain("500: '#66866D'")
+    expect(tailwindSource).toContain("950: '#0B0D0F'")
+    expect(tailwindSource).toContain("paper: '#F4F6F8'")
+    expect(tailwindSource).toContain("clay: '#B8684F'")
+    expect(styleSource).toContain('--gb-surface: #FFFFFF')
+    expect(styleSource).toContain('--gb-surface-dark: #16191C')
+    expect(styleSource).toContain('bg-white/70 backdrop-blur-xl')
   })
 
   it('uses restrained controls and reduced-motion fallbacks', () => {
@@ -23,14 +24,16 @@ describe('Gateway Bot design system', () => {
     const primaryButtonBlock = styleSource.match(/\.btn-primary\s*\{[\s\S]*?\n {2}\}/)?.[0] ?? ''
     const cardBlock = styleSource.match(/\.card\s*\{[\s\S]*?\n {2}\}/)?.[0] ?? ''
 
-    expect(buttonBlock).toContain('rounded-[4px]')
-    expect(cardBlock).toContain('rounded-[6px]')
+    expect(buttonBlock).toContain('rounded-[6px]')
+    expect(cardBlock).toContain('rounded-[8px]')
     expect(primaryButtonBlock).not.toContain('bg-gradient')
     expect(styleSource).toContain('@media (prefers-reduced-motion: reduce)')
   })
 
-  it('uses the Gateway Bot type stack and tabular numeric data', () => {
-    expect(tailwindSource).toContain("'Geist Variable'")
+  it('uses the Apple-native type stack and tabular numeric data', () => {
+    expect(tailwindSource).toContain("'-apple-system'")
+    expect(tailwindSource).toContain("'SF Pro Display'")
+    expect(tailwindSource).toContain("'PingFang SC'")
     expect(tailwindSource).toContain("'Noto Sans SC'")
     expect(styleSource).toContain('font-variant-numeric: tabular-nums')
   })

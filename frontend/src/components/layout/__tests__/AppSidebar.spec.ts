@@ -58,6 +58,14 @@ describe('AppSidebar header styles', () => {
     expect(componentSource).toContain('Gateway Bot')
     expect(componentSource).not.toContain("'/logo.svg'")
     expect(componentSource).not.toContain('shadow-glow')
+    expect(componentSource).not.toContain('<GatewayBrand :name=')
+  })
+
+  it('uses Phosphor components for local navigation icons while retaining custom SVG support', () => {
+    expect(componentSource).toContain("from '@phosphor-icons/vue'")
+    expect(componentSource).not.toContain("h('svg'")
+    expect(componentSource).toContain('iconSvg?: string')
+    expect(componentSource).toContain('sanitizeSvg(item.iconSvg)')
   })
 
   it('keeps the app canvas flat and free of the legacy mesh background', () => {

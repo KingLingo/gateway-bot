@@ -6,17 +6,17 @@ export default {
     extend: {
       colors: {
         primary: {
-          50: '#EEF5F0',
-          100: '#DDEBE2',
-          200: '#BBD7C4',
-          300: '#94C2A5',
-          400: '#79B891',
-          500: '#69B086',
-          600: '#438B65',
-          700: '#1F6B4A',
-          800: '#1B563E',
-          900: '#174534',
-          950: '#0C281E'
+          50: '#F0F5F1',
+          100: '#DFE9E0',
+          200: '#C5D8C7',
+          300: '#A5C1A9',
+          400: '#7FA286',
+          500: '#66866D',
+          600: '#526E59',
+          700: '#405647',
+          800: '#324337',
+          900: '#28362D',
+          950: '#172018'
         },
         accent: {
           50: '#F8F7F2',
@@ -32,53 +32,56 @@ export default {
           950: '#171815'
         },
         gray: {
-          50: '#F8F7F2',
-          100: '#F0EEE7',
-          200: '#D8D5CC',
-          300: '#C1BEB5',
-          400: '#969990',
-          500: '#70736B',
-          600: '#575B54',
-          700: '#42463F',
-          800: '#30342F',
-          900: '#242521',
-          950: '#171815'
+          50: '#F7F8F9',
+          100: '#EEF0F2',
+          200: '#DDE1E5',
+          300: '#C8CED4',
+          400: '#98A1AA',
+          500: '#6B757F',
+          600: '#515B65',
+          700: '#3C454E',
+          800: '#292F35',
+          900: '#1C2126',
+          950: '#111417'
         },
         dark: {
-          50: '#F2F0EA',
-          100: '#E4E3DD',
-          200: '#C9CEC8',
-          300: '#B2BCB5',
-          400: '#94A198',
-          500: '#77847C',
-          600: '#4A5850',
-          700: '#303C35',
-          800: '#171F1B',
-          900: '#131A17',
-          950: '#0F1512'
+          50: '#F5F7F8',
+          100: '#E4E8EB',
+          200: '#CCD3D9',
+          300: '#B2BBC3',
+          400: '#9DA6AE',
+          500: '#737D86',
+          600: '#4D565E',
+          700: '#32393F',
+          800: '#1C2126',
+          900: '#14181C',
+          950: '#0B0D0F'
         },
-        paper: '#F5F3ED',
-        clay: '#C76D4E',
+        paper: '#F4F6F8',
+        clay: '#B8684F',
         surface: {
-          DEFAULT: '#FCFBF7',
-          muted: '#F0EEE7',
-          brand: '#26352D'
+          DEFAULT: '#FFFFFF',
+          muted: '#EEF0F2',
+          brand: '#28362D'
         }
       },
       fontFamily: {
         sans: [
-          'Geist Variable',
-          'Noto Sans SC',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'SF Pro Display',
+          'SF Pro Text',
           'PingFang SC',
           'Hiragino Sans GB',
-          'Microsoft YaHei',
+          'Noto Sans SC',
+          'Segoe UI',
           'sans-serif'
         ],
-        mono: ['Geist Mono', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+        mono: ['SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
       },
       boxShadow: {
-        glass: '0 18px 48px rgba(15, 21, 18, 0.14)',
-        'glass-sm': '0 8px 24px rgba(15, 21, 18, 0.10)',
+        glass: '0 18px 48px rgba(20, 24, 28, 0.13)',
+        'glass-sm': '0 8px 24px rgba(20, 24, 28, 0.09)',
         glow: '0 0 0 1px rgba(105, 176, 134, 0.22)',
         'glow-lg': '0 0 0 1px rgba(105, 176, 134, 0.28)',
         card: '0 1px 2px rgba(15, 21, 18, 0.04)',
