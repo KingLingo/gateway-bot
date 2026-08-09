@@ -18,11 +18,11 @@
       {{ error }}
     </div>
     <div v-else-if="loading && !runtime" class="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6" aria-busy="true">
-      <div v-for="index in 6" :key="index" class="h-16 animate-pulse rounded-xl bg-gray-100 dark:bg-dark-800" />
+      <div v-for="index in 6" :key="index" class="h-16 animate-pulse rounded-[6px] bg-gray-100 dark:bg-dark-800" />
     </div>
     <template v-else-if="runtime">
       <dl class="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
-        <div v-for="item in statusItems" :key="item.label" class="rounded-xl border border-gray-100 bg-gray-50/80 px-3 py-3 dark:border-dark-700/60 dark:bg-dark-900/40">
+        <div v-for="item in statusItems" :key="item.label" class="rounded-[6px] border border-gray-100 bg-gray-50/80 px-3 py-3 dark:border-dark-700/60 dark:bg-dark-900/40">
           <dt class="text-xs text-gray-500 dark:text-dark-400">{{ item.label }}</dt>
           <dd class="mt-1.5 flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white">
             <span v-if="item.dot" class="h-2 w-2 shrink-0 rounded-full" :class="item.dot" />
@@ -32,7 +32,7 @@
       </dl>
 
       <div class="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1.4fr)_minmax(220px,0.6fr)]">
-        <div class="rounded-xl border border-gray-100 px-4 py-3 dark:border-dark-700/60 dark:bg-dark-900/20">
+        <div class="rounded-[6px] border border-gray-100 px-4 py-3 dark:border-dark-700/60 dark:bg-dark-900/20">
           <h3 class="text-sm font-medium text-gray-900 dark:text-white">{{ t('admin.promptAudit.runtime.guardMetrics') }}</h3>
           <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
             <div v-for="metric in guardMetricItems" :key="metric.label" class="rounded-lg bg-gray-50 px-2.5 py-2 dark:bg-dark-900/60">
@@ -52,7 +52,7 @@
             {{ t('admin.promptAudit.runtime.deliveryTotals', { enqueued: runtime.enqueued_total, dropped: runtime.dropped_total, processed: runtime.processed_total, failed: runtime.failed_total }) }}
           </p>
         </div>
-        <div class="rounded-xl border border-gray-100 px-4 py-3 dark:border-dark-700/60 dark:bg-dark-900/20">
+        <div class="rounded-[6px] border border-gray-100 px-4 py-3 dark:border-dark-700/60 dark:bg-dark-900/20">
           <h3 class="text-sm font-medium text-gray-900 dark:text-white">{{ t('admin.promptAudit.runtime.latest') }}</h3>
           <p class="mt-2 text-sm text-gray-600 dark:text-dark-300">
             {{ runtime.last_processed_at ? formatDate(runtime.last_processed_at) : t('admin.promptAudit.common.never') }}

@@ -352,7 +352,7 @@ onUnmounted(() => {
 .date-picker-dropdown {
   @apply absolute left-0 z-[100] mt-2;
   @apply bg-white dark:bg-dark-800;
-  @apply rounded-xl;
+  @apply rounded-[6px];
   @apply border border-gray-200 dark:border-dark-700;
   @apply shadow-lg shadow-black/10 dark:shadow-black/30;
   @apply overflow-hidden;

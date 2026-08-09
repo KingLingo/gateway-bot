@@ -7,8 +7,48 @@
       </div>
 
       <template v-else-if="stats">
+        <section
+          data-testid="admin-subscription-operations"
+          class="grid gap-px overflow-hidden rounded-[6px] border border-gray-200 bg-gray-200 dark:border-dark-700 dark:bg-dark-700 lg:grid-cols-[1.15fr_0.85fr_0.85fr]"
+        >
+          <div class="bg-dark-950 p-6 text-white dark:bg-dark-900">
+            <p class="text-sm font-medium text-primary-400">订阅运营</p>
+            <h2 class="mt-2 text-2xl font-semibold">先处理订阅，再查看系统负载</h2>
+            <p class="mt-3 max-w-xl text-sm leading-6 text-dark-300">
+              进入订阅记录完成分配、延期与状态处理，所有原有管理操作保持可用。
+            </p>
+          </div>
+          <router-link
+            to="/admin/subscriptions"
+            class="group flex min-h-[156px] flex-col justify-between bg-white p-6 transition-colors hover:bg-gray-50 dark:bg-dark-900 dark:hover:bg-dark-800"
+          >
+            <Icon name="creditCard" size="md" class="text-primary-600 dark:text-primary-400" />
+            <span>
+              <span class="block font-semibold text-gray-900 dark:text-white">订阅记录</span>
+              <span class="mt-1 block text-xs text-gray-500 dark:text-dark-400">分配、延期、暂停与恢复</span>
+            </span>
+            <Icon name="arrowRight" size="sm" class="self-end text-gray-400 transition-transform group-hover:translate-x-0.5" />
+          </router-link>
+          <router-link
+            to="/admin/groups"
+            class="group flex min-h-[156px] flex-col justify-between bg-white p-6 transition-colors hover:bg-gray-50 dark:bg-dark-900 dark:hover:bg-dark-800"
+          >
+            <Icon name="grid" size="md" class="text-primary-600 dark:text-primary-400" />
+            <span>
+              <span class="block font-semibold text-gray-900 dark:text-white">订阅分组</span>
+              <span class="mt-1 block text-xs text-gray-500 dark:text-dark-400">维护模型范围、倍率与额度</span>
+            </span>
+            <Icon name="arrowRight" size="sm" class="self-end text-gray-400 transition-transform group-hover:translate-x-0.5" />
+          </router-link>
+        </section>
+
         <!-- Row 1: Core Stats -->
-        <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <section data-testid="admin-system-status" class="space-y-4">
+          <div>
+            <h2 class="text-xl font-semibold text-gray-950 dark:text-white">系统状态</h2>
+            <p class="mt-1 text-sm text-gray-500 dark:text-dark-400">密钥、渠道账户与当前请求状态。</p>
+          </div>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <!-- Total API Keys -->
           <div class="card p-4">
             <div class="flex items-center gap-3">
@@ -93,10 +133,16 @@
               </div>
             </div>
           </div>
-        </div>
+          </div>
+        </section>
 
         <!-- Row 2: Token Stats -->
-        <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <section data-testid="admin-usage-overview" class="space-y-4">
+          <div>
+            <h2 class="text-xl font-semibold text-gray-950 dark:text-white">用量与性能</h2>
+            <p class="mt-1 text-sm text-gray-500 dark:text-dark-400">令牌、成本、吞吐与平均响应时间。</p>
+          </div>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <!-- Today Tokens -->
           <div class="card p-4">
             <div class="flex items-center gap-3">
@@ -214,7 +260,8 @@
               </div>
             </div>
           </div>
-        </div>
+          </div>
+        </section>
 
         <!-- Quick Actions -->
         <div class="card p-4">
