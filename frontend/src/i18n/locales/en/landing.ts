@@ -5,6 +5,9 @@ export default {
   },
   // Home Page
   home: {
+    title: 'AI access, always within reach',
+    description: 'Subscribe to leading AI APIs and manage keys, usage, and billing cycles in one place.',
+    compactHint: 'Open the console and continue your AI integration',
     viewOnGithub: 'View on GitHub',
     viewDocs: 'View Documentation',
     docs: 'Docs',
@@ -14,6 +17,39 @@ export default {
     login: 'Login',
     getStarted: 'Get Started',
     goToDashboard: 'Go to Dashboard',
+    heroFoot: {
+      subscription: 'Subscription status at a glance',
+      keys: 'One API Key, one access point',
+      usage: 'Clear usage for every cycle'
+    },
+    access: {
+      title: 'From subscription to request in three steps',
+      description: 'Choose access, create a key, and connect AI to the tools you already use.',
+      choose: { title: 'Choose a subscription', description: 'Compare cycles, quotas, and available models.' },
+      key: { title: 'Create a key', description: 'Generate an API Key with the limits you need.' },
+      call: { title: 'Start calling', description: 'Use one endpoint and track every request in the console.' }
+    },
+    subscription: {
+      title: 'A subscription should be more than a balance',
+      description: 'See your current plan, cycle, quota progress, and expiry exactly when you need them.',
+      imageCaption: 'A clear path for every request',
+      period: 'Cycle', periodValue: 'Defined by your plan',
+      quota: 'Quota progress', quotaValue: 'Updated with usage',
+      expiry: 'Expiry', expiryValue: 'Visible before renewal',
+      action: 'View my subscriptions'
+    },
+    models: {
+      title: 'Model choice where it matters',
+      description: 'Supported capabilities evolve with the service. Choose what your current task needs.'
+    },
+    visibility: {
+      title: 'See stability and usage clearly',
+      description: 'Session, request, and channel status stay visible after you connect.',
+      session: { title: 'Session continuity', description: 'Keep request context on a consistent path.' },
+      tracking: { title: 'Usage tracking', description: 'Review real usage by cycle, model, and key.' },
+      status: { title: 'Channel status', description: 'Spot availability and exceptions without guessing.' }
+    },
+    final: { eyebrow: 'Ready to connect?', title: 'Start with one API Key' },
     // User-focused value proposition
     heroSubtitle: 'One Key, All AI Models',
     heroDescription: 'No need to manage multiple subscriptions. Access Claude, GPT, Gemini and more with a single API key',

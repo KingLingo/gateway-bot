@@ -50,4 +50,14 @@ describe('Gateway Bot public brand', () => {
       "ref<string>('Gateway Bot')",
     )
   })
+
+  it('removes upstream project promotion and version branding from the product UI', () => {
+    for (const file of userVisibleFiles) {
+      expect(readFileSync(file, 'utf8'), file).not.toContain('github.com/Wei-Shaw/sub2api')
+    }
+
+    const sidebar = readFileSync(resolve(srcRoot, 'components/layout/AppSidebar.vue'), 'utf8')
+    expect(sidebar).not.toContain('<VersionBadge')
+    expect(sidebar).not.toContain("import VersionBadge")
+  })
 })

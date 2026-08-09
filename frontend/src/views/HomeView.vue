@@ -1,716 +1,417 @@
 <template>
-  <!-- Custom Home Content: Full Page Mode -->
-  <div v-if="hasHomeContent" class="min-h-screen">
-    <!-- iframe mode -->
+  <div v-if="hasHomeContent" class="min-h-screen bg-paper dark:bg-dark-950">
     <iframe
       v-if="isHomeContentUrl"
       :src="homeContent.trim()"
       class="h-screen w-full border-0"
-      allowfullscreen
-    ></iframe>
-    <!-- HTML mode - SECURITY: homeContent is admin-only setting, XSS risk is acceptable -->
-    <div v-else v-html="homeContent"></div>
+      title="自定义首页"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+    />
+    <div v-else v-html="homeContent" />
   </div>
 
-  <!-- Compact Home Page -->
   <div
     v-else-if="compactHomeEnabled"
     data-testid="compact-home"
-    class="flex min-h-screen flex-col bg-gray-50 text-gray-900 dark:bg-dark-950 dark:text-white"
+    class="flex min-h-[100dvh] items-center justify-center bg-dark-950 px-5 text-dark-50"
   >
-    <header class="border-b border-gray-200 px-4 py-4 sm:px-6 dark:border-dark-800">
-      <nav class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 sm:gap-4">
-        <div class="flex min-w-0 flex-1 items-center gap-3">
-          <img
-            :src="siteLogo || '/logo.svg'"
-            alt="Logo"
-            class="h-9 w-9 shrink-0 rounded-lg object-contain"
-          />
-          <span class="min-w-0 truncate text-base font-semibold">{{ siteName }}</span>
-        </div>
-        <div class="flex max-w-full shrink-0 flex-wrap items-center justify-end gap-2">
-          <LocaleSwitcher />
-          <a
-            v-if="docUrl"
-            :href="docUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 dark:text-dark-400 dark:hover:bg-dark-800"
-            :title="t('home.viewDocs')"
-          >
-            <Icon name="book" size="md" />
-          </a>
-          <button
-            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 dark:text-dark-400 dark:hover:bg-dark-800"
-            :title="isDark ? t('home.switchToLight') : t('home.switchToDark')"
-            @click="toggleTheme"
-          >
-            <Icon v-if="isDark" name="sun" size="md" />
-            <Icon v-else name="moon" size="md" />
-          </button>
-          <router-link
-            :to="isAuthenticated ? dashboardPath : '/login'"
-            class="inline-flex min-h-10 shrink-0 items-center justify-center rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-200"
-          >
-            {{ isAuthenticated ? t('home.dashboard') : t('home.login') }}
-          </router-link>
-        </div>
-      </nav>
-    </header>
-
-    <main class="flex min-w-0 flex-1 items-center justify-center px-4 py-16 sm:px-6">
-      <div class="min-w-0 max-w-2xl text-center">
-        <img
-          :src="siteLogo || '/logo.svg'"
-          alt="Logo"
-          class="mx-auto mb-6 h-20 w-20 rounded-2xl object-contain"
-        />
-        <h1 class="[overflow-wrap:anywhere] text-3xl font-bold md:text-4xl">{{ siteName }}</h1>
-        <p class="mt-4 whitespace-pre-wrap [overflow-wrap:anywhere] text-base text-gray-600 dark:text-dark-300">{{ siteSubtitle }}</p>
-        <router-link
-          :to="isAuthenticated ? dashboardPath : '/login'"
-          class="mt-8 inline-flex min-h-10 items-center justify-center rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-700"
-        >
-          {{ isAuthenticated ? t('home.goToDashboard') : t('home.login') }}
-        </router-link>
-      </div>
-    </main>
-
-    <footer class="min-w-0 border-t border-gray-200 px-4 py-5 text-center text-sm text-gray-500 [overflow-wrap:anywhere] sm:px-6 dark:border-dark-800 dark:text-dark-400">
-      &copy; {{ currentYear }} {{ siteName }}
-    </footer>
+    <RouterLink
+      :to="dashboardPath"
+      class="group flex max-w-lg items-center gap-5 border-l border-primary-500 py-4 pl-5"
+    >
+      <span class="brand-mark">G</span>
+      <span>
+        <span class="block text-2xl font-semibold">{{ siteName }}</span>
+        <span class="mt-1 block text-sm text-dark-400">{{ t('home.compactHint') }}</span>
+      </span>
+      <Icon name="arrowRight" class="ml-auto text-primary-400 transition-transform group-hover:translate-x-1" />
+    </RouterLink>
   </div>
 
-  <!-- Default Home Page -->
-  <div
-    v-else
-    class="relative flex min-h-screen flex-col overflow-hidden bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-100 dark:from-dark-950 dark:via-dark-900 dark:to-dark-950"
-  >
-    <!-- Background Decorations -->
-    <div class="pointer-events-none absolute inset-0 overflow-hidden">
-      <div
-        class="absolute -right-40 -top-40 h-96 w-96 rounded-full bg-primary-400/20 blur-3xl"
-      ></div>
-      <div
-        class="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-primary-500/15 blur-3xl"
-      ></div>
-      <div
-        class="absolute left-1/3 top-1/4 h-72 w-72 rounded-full bg-primary-300/10 blur-3xl"
-      ></div>
-      <div
-        class="absolute bottom-1/4 right-1/4 h-64 w-64 rounded-full bg-primary-400/10 blur-3xl"
-      ></div>
-      <div
-        class="absolute inset-0 bg-[linear-gradient(rgba(20,184,166,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(20,184,166,0.03)_1px,transparent_1px)] bg-[size:64px_64px]"
-      ></div>
-    </div>
+  <div v-else data-testid="gateway-home" class="gateway-home">
+    <header class="home-nav">
+      <RouterLink to="/home" class="brand-wordmark" aria-label="Gateway Bot 首页">
+        <span class="brand-mark">G</span>
+        <span class="brand-name"><strong>Gateway</strong><em>Bot</em></span>
+      </RouterLink>
 
-    <!-- Header -->
-    <header class="relative z-20 px-6 py-4">
-      <nav class="mx-auto flex max-w-6xl items-center justify-between">
-        <!-- Logo -->
-        <div class="flex items-center">
-          <div class="h-10 w-10 overflow-hidden rounded-xl shadow-md">
-            <img :src="siteLogo || '/logo.svg'" alt="Logo" class="h-full w-full object-contain" />
-          </div>
-        </div>
-
-        <!-- Nav Actions -->
-        <div class="flex items-center gap-3">
-          <!-- Language Switcher -->
-          <LocaleSwitcher />
-
-          <!-- Doc Link -->
-          <a
-            v-if="docUrl"
-            :href="docUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-dark-400 dark:hover:bg-dark-800 dark:hover:text-white"
-            :title="t('home.viewDocs')"
-          >
-            <Icon name="book" size="md" />
-          </a>
-
-          <!-- Theme Toggle -->
-          <button
-            @click="toggleTheme"
-            class="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-dark-400 dark:hover:bg-dark-800 dark:hover:text-white"
-            :title="isDark ? t('home.switchToLight') : t('home.switchToDark')"
-          >
-            <Icon v-if="isDark" name="sun" size="md" />
-            <Icon v-else name="moon" size="md" />
-          </button>
-
-          <!-- Login / Dashboard Button -->
-          <router-link
-            v-if="isAuthenticated"
-            :to="dashboardPath"
-            class="inline-flex items-center gap-1.5 rounded-full bg-gray-900 py-1 pl-1 pr-2.5 transition-colors hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700"
-          >
-            <span
-              class="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-[10px] font-semibold text-white"
-            >
-              {{ userInitial }}
-            </span>
-            <span class="text-xs font-medium text-white">{{ t('home.dashboard') }}</span>
-            <svg
-              class="h-3 w-3 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
-              />
-            </svg>
-          </router-link>
-          <router-link
-            v-else
-            to="/login"
-            class="inline-flex items-center rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700"
-          >
-            {{ t('home.login') }}
-          </router-link>
-        </div>
-      </nav>
+      <div class="flex items-center gap-1 sm:gap-2">
+        <a
+          v-if="docUrl"
+          :href="docUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="nav-link hidden sm:inline-flex"
+        >
+          {{ t('home.docs') }}
+        </a>
+        <LocaleSwitcher />
+        <button
+          type="button"
+          class="nav-icon"
+          :aria-label="isDark ? t('home.switchToLight') : t('home.switchToDark')"
+          @click="toggleTheme"
+        >
+          <Icon :name="isDark ? 'sun' : 'moon'" size="sm" />
+        </button>
+        <RouterLink :to="dashboardPath" class="home-console-link">
+          {{ isAuthenticated ? t('home.dashboard') : t('home.login') }}
+          <Icon name="arrowRight" size="sm" />
+        </RouterLink>
+      </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="relative z-10 flex-1 px-6 py-16">
-      <div class="mx-auto max-w-6xl">
-        <!-- Hero Section - Left/Right Layout -->
-        <div class="mb-12 flex flex-col items-center justify-between gap-12 lg:flex-row lg:gap-16">
-          <!-- Left: Text Content -->
-          <div class="flex-1 text-center lg:text-left">
-            <h1
-              class="mb-4 text-4xl font-bold text-gray-900 dark:text-white md:text-5xl lg:text-6xl"
-            >
-              {{ siteName }}
-            </h1>
-            <p class="mb-8 text-lg text-gray-600 dark:text-dark-300 md:text-xl">
-              {{ siteSubtitle }}
-            </p>
+    <main>
+      <section class="hero-section">
+        <picture class="hero-visual" aria-hidden="true">
+          <source media="(max-width: 767px)" srcset="/images/gateway-architecture-mobile.jpg" />
+          <img src="/images/gateway-architecture-desktop.jpg" alt="" fetchpriority="high" />
+        </picture>
+        <div class="hero-scrim" />
+        <div class="hero-grain" />
 
-            <!-- CTA Button -->
+        <div class="hero-content">
+          <div class="hero-copy">
+            <h1>{{ t('home.title') }}</h1>
+            <p>{{ t('home.description') }}</p>
+            <div class="hero-actions">
+              <RouterLink :to="dashboardPath" class="hero-primary">
+                {{ t('home.goToDashboard') }}
+                <Icon name="arrowRight" size="sm" />
+              </RouterLink>
+              <a
+                v-if="docUrl"
+                data-testid="home-docs"
+                :href="docUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hero-secondary"
+              >
+                {{ t('home.viewDocs') }}
+              </a>
+            </div>
+          </div>
+
+          <div class="hero-index" aria-hidden="true">
+            <span>01</span>
+            <span class="hero-index-line" />
+            <span>接入</span>
+          </div>
+        </div>
+
+        <div class="hero-foot">
+          <span>{{ t('home.heroFoot.subscription') }}</span>
+          <span>{{ t('home.heroFoot.keys') }}</span>
+          <span>{{ t('home.heroFoot.usage') }}</span>
+        </div>
+      </section>
+
+      <section class="access-section home-section">
+        <div class="section-heading">
+          <h2>{{ t('home.access.title') }}</h2>
+          <p>{{ t('home.access.description') }}</p>
+        </div>
+        <ol class="access-path">
+          <li v-for="(step, index) in accessSteps" :key="step.title">
+            <span class="step-number">0{{ index + 1 }}</span>
             <div>
-              <router-link
-                :to="isAuthenticated ? dashboardPath : '/login'"
-                class="btn btn-primary px-8 py-3 text-base shadow-lg shadow-primary-500/30"
-              >
-                {{ isAuthenticated ? t('home.goToDashboard') : t('home.getStarted') }}
-                <Icon name="arrowRight" size="md" class="ml-2" :stroke-width="2" />
-              </router-link>
+              <h3>{{ step.title }}</h3>
+              <p>{{ step.description }}</p>
             </div>
-          </div>
+            <Icon v-if="index < accessSteps.length - 1" name="arrowRight" class="step-arrow" />
+          </li>
+        </ol>
+      </section>
 
-          <!-- Right: Terminal Animation -->
-          <div class="flex flex-1 justify-center lg:justify-end">
-            <div class="terminal-container">
-              <div class="terminal-window">
-                <!-- Window header -->
-                <div class="terminal-header">
-                  <div class="terminal-buttons">
-                    <span class="btn-close"></span>
-                    <span class="btn-minimize"></span>
-                    <span class="btn-maximize"></span>
-                  </div>
-                  <span class="terminal-title">terminal</span>
-                </div>
-                <!-- Terminal content -->
-                <div class="terminal-body">
-                  <div class="code-line line-1">
-                    <span class="code-prompt">$</span>
-                    <span class="code-cmd">curl</span>
-                    <span class="code-flag">-X POST</span>
-                    <span class="code-url">/v1/messages</span>
-                  </div>
-                  <div class="code-line line-2">
-                    <span class="code-comment"># Routing to upstream...</span>
-                  </div>
-                  <div class="code-line line-3">
-                    <span class="code-success">200 OK</span>
-                    <span class="code-response">{ "content": "Hello!" }</span>
-                  </div>
-                  <div class="code-line line-4">
-                    <span class="code-prompt">$</span>
-                    <span class="cursor"></span>
-                  </div>
-                </div>
-              </div>
+      <section class="subscription-section home-section">
+        <div class="subscription-image">
+          <img src="/images/gateway-access-detail.jpg" alt="玻璃建筑通道细节" loading="lazy" />
+          <span>{{ t('home.subscription.imageCaption') }}</span>
+        </div>
+        <div class="subscription-copy">
+          <h2>{{ t('home.subscription.title') }}</h2>
+          <p>{{ t('home.subscription.description') }}</p>
+          <dl>
+            <div v-for="item in subscriptionItems" :key="item.label">
+              <dt>{{ item.label }}</dt>
+              <dd>{{ item.value }}</dd>
             </div>
+          </dl>
+          <RouterLink to="/subscriptions" class="text-link">
+            {{ t('home.subscription.action') }}
+            <Icon name="arrowRight" size="sm" />
+          </RouterLink>
+        </div>
+      </section>
+
+      <section class="models-section home-section">
+        <h2>{{ t('home.models.title') }}</h2>
+        <p>{{ t('home.models.description') }}</p>
+        <div class="model-rail" aria-label="支持的模型平台">
+          <span>OpenAI</span>
+          <span class="model-claude">Claude</span>
+          <span>Gemini</span>
+          <span>Grok</span>
+          <span>更多模型</span>
+        </div>
+      </section>
+
+      <section class="visibility-section home-section">
+        <div>
+          <h2>{{ t('home.visibility.title') }}</h2>
+          <p>{{ t('home.visibility.description') }}</p>
+        </div>
+        <div class="visibility-ledger">
+          <div v-for="item in visibilityItems" :key="item.title">
+            <Icon :name="item.icon" />
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.description }}</p>
           </div>
         </div>
+      </section>
 
-        <!-- Feature Tags - Centered -->
-        <div class="mb-12 flex flex-wrap items-center justify-center gap-4 md:gap-6">
-          <div
-            class="inline-flex items-center gap-2.5 rounded-full border border-gray-200/50 bg-white/80 px-5 py-2.5 shadow-sm backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/80"
-          >
-            <Icon name="swap" size="sm" class="text-primary-500" />
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{
-              t('home.tags.subscriptionToApi')
-            }}</span>
-          </div>
-          <div
-            class="inline-flex items-center gap-2.5 rounded-full border border-gray-200/50 bg-white/80 px-5 py-2.5 shadow-sm backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/80"
-          >
-            <Icon name="shield" size="sm" class="text-primary-500" />
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{
-              t('home.tags.stickySession')
-            }}</span>
-          </div>
-          <div
-            class="inline-flex items-center gap-2.5 rounded-full border border-gray-200/50 bg-white/80 px-5 py-2.5 shadow-sm backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/80"
-          >
-            <Icon name="chart" size="sm" class="text-primary-500" />
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{
-              t('home.tags.realtimeBilling')
-            }}</span>
-          </div>
-        </div>
-
-        <!-- Features Grid -->
-        <div class="mb-12 grid gap-6 md:grid-cols-3">
-          <!-- Feature 1: Unified Gateway -->
-          <div
-            class="group rounded-2xl border border-gray-200/50 bg-white/60 p-6 backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 dark:border-dark-700/50 dark:bg-dark-800/60"
-          >
-            <div
-              class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/30 transition-transform group-hover:scale-110"
-            >
-              <Icon name="server" size="lg" class="text-white" />
-            </div>
-            <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-              {{ t('home.features.unifiedGateway') }}
-            </h3>
-            <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">
-              {{ t('home.features.unifiedGatewayDesc') }}
-            </p>
-          </div>
-
-          <!-- Feature 2: Account Pool -->
-          <div
-            class="group rounded-2xl border border-gray-200/50 bg-white/60 p-6 backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 dark:border-dark-700/50 dark:bg-dark-800/60"
-          >
-            <div
-              class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/30 transition-transform group-hover:scale-110"
-            >
-              <svg
-                class="h-6 w-6 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="1.5"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
-                />
-              </svg>
-            </div>
-            <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-              {{ t('home.features.multiAccount') }}
-            </h3>
-            <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">
-              {{ t('home.features.multiAccountDesc') }}
-            </p>
-          </div>
-
-          <!-- Feature 3: Billing & Quota -->
-          <div
-            class="group rounded-2xl border border-gray-200/50 bg-white/60 p-6 backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 dark:border-dark-700/50 dark:bg-dark-800/60"
-          >
-            <div
-              class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg shadow-purple-500/30 transition-transform group-hover:scale-110"
-            >
-              <svg
-                class="h-6 w-6 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="1.5"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"
-                />
-              </svg>
-            </div>
-            <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-              {{ t('home.features.balanceQuota') }}
-            </h3>
-            <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">
-              {{ t('home.features.balanceQuotaDesc') }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Supported Providers -->
-        <div class="mb-8 text-center">
-          <h2 class="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
-            {{ t('home.providers.title') }}
-          </h2>
-          <p class="text-sm text-gray-600 dark:text-dark-400">
-            {{ t('home.providers.description') }}
-          </p>
-        </div>
-
-        <div class="mb-16 flex flex-wrap items-center justify-center gap-4">
-          <!-- Claude - Supported -->
-          <div
-            class="flex items-center gap-2 rounded-xl border border-primary-200 bg-white/60 px-5 py-3 ring-1 ring-primary-500/20 backdrop-blur-sm dark:border-primary-800 dark:bg-dark-800/60"
-          >
-            <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-400 to-orange-500"
-            >
-              <span class="text-xs font-bold text-white">C</span>
-            </div>
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{ t('home.providers.claude') }}</span>
-            <span
-              class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400"
-              >{{ t('home.providers.supported') }}</span
-            >
-          </div>
-          <!-- GPT - Supported -->
-          <div
-            class="flex items-center gap-2 rounded-xl border border-primary-200 bg-white/60 px-5 py-3 ring-1 ring-primary-500/20 backdrop-blur-sm dark:border-primary-800 dark:bg-dark-800/60"
-          >
-            <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-green-500 to-green-600"
-            >
-              <span class="text-xs font-bold text-white">G</span>
-            </div>
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">GPT</span>
-            <span
-              class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400"
-              >{{ t('home.providers.supported') }}</span
-            >
-          </div>
-          <!-- Gemini - Supported -->
-          <div
-            class="flex items-center gap-2 rounded-xl border border-primary-200 bg-white/60 px-5 py-3 ring-1 ring-primary-500/20 backdrop-blur-sm dark:border-primary-800 dark:bg-dark-800/60"
-          >
-            <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600"
-            >
-              <span class="text-xs font-bold text-white">G</span>
-            </div>
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{ t('home.providers.gemini') }}</span>
-            <span
-              class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400"
-              >{{ t('home.providers.supported') }}</span
-            >
-          </div>
-          <!-- Antigravity - Supported -->
-          <div
-            class="flex items-center gap-2 rounded-xl border border-primary-200 bg-white/60 px-5 py-3 ring-1 ring-primary-500/20 backdrop-blur-sm dark:border-primary-800 dark:bg-dark-800/60"
-          >
-            <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500 to-pink-600"
-            >
-              <span class="text-xs font-bold text-white">A</span>
-            </div>
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{ t('home.providers.antigravity') }}</span>
-            <span
-              class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400"
-              >{{ t('home.providers.supported') }}</span
-            >
-          </div>
-          <!-- More - Coming Soon -->
-          <div
-            class="flex items-center gap-2 rounded-xl border border-gray-200/50 bg-white/40 px-5 py-3 opacity-60 backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/40"
-          >
-            <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-gray-500 to-gray-600"
-            >
-              <span class="text-xs font-bold text-white">+</span>
-            </div>
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{ t('home.providers.more') }}</span>
-            <span
-              class="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500 dark:bg-dark-700 dark:text-dark-400"
-              >{{ t('home.providers.soon') }}</span
-            >
-          </div>
-        </div>
-      </div>
+      <section class="final-section">
+        <p>{{ t('home.final.eyebrow') }}</p>
+        <h2>{{ t('home.final.title') }}</h2>
+        <RouterLink :to="dashboardPath" class="hero-primary">
+          {{ t('home.goToDashboard') }}
+          <Icon name="arrowRight" size="sm" />
+        </RouterLink>
+      </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="relative z-10 border-t border-gray-200/50 px-6 py-8 dark:border-dark-800/50">
-      <div
-        class="mx-auto flex max-w-6xl flex-col items-center justify-center gap-4 text-center sm:flex-row sm:text-left"
+    <footer class="home-footer">
+      <p>&copy; {{ currentYear }} {{ siteName }}. {{ t('home.footer.allRightsReserved') }}</p>
+      <a
+        v-if="docUrl"
+        :href="docUrl"
+        target="_blank"
+        rel="noopener noreferrer"
       >
-        <p class="text-sm text-gray-500 dark:text-dark-400">
-          &copy; {{ currentYear }} {{ siteName }}. {{ t('home.footer.allRightsReserved') }}
-        </p>
-        <div class="flex items-center gap-4">
-          <a
-            v-if="docUrl"
-            :href="docUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-dark-400 dark:hover:text-white"
-          >
-            {{ t('home.docs') }}
-          </a>
-          <a
-            :href="githubUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-dark-400 dark:hover:text-white"
-          >
-            GitHub
-          </a>
-        </div>
-      </div>
+        {{ t('home.docs') }}
+      </a>
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useAuthStore, useAppStore } from '@/stores'
-import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
+import { useAppStore, useAuthStore } from '@/stores'
 import Icon from '@/components/icons/Icon.vue'
+import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
 import { sanitizeUrl } from '@/utils/url'
 
 const { t } = useI18n()
-
-const authStore = useAuthStore()
 const appStore = useAppStore()
+const authStore = useAuthStore()
 
-// Site settings - directly from appStore (already initialized from injected config)
 const siteName = computed(() => appStore.cachedPublicSettings?.site_name || appStore.siteName || 'Gateway Bot')
-const siteLogo = computed(() => sanitizeUrl(appStore.cachedPublicSettings?.site_logo || appStore.siteLogo || '', { allowRelative: true, allowDataUrl: true }))
-const siteSubtitle = computed(() => appStore.cachedPublicSettings?.site_subtitle || 'AI API Gateway Platform')
 const docUrl = computed(() => sanitizeUrl(appStore.cachedPublicSettings?.doc_url || appStore.docUrl || ''))
 const homeContent = computed(() => appStore.cachedPublicSettings?.home_content || '')
 const hasHomeContent = computed(() => homeContent.value.trim().length > 0)
 const compactHomeEnabled = computed(() => appStore.cachedPublicSettings?.compact_home_enabled === true)
-
-// Check if homeContent is a URL (for iframe display)
-const isHomeContentUrl = computed(() => {
-  const content = homeContent.value.trim()
-  return content.startsWith('http://') || content.startsWith('https://')
-})
-
-// Theme
+const isHomeContentUrl = computed(() => /^(https?:\/\/)/.test(homeContent.value.trim()))
+const isAuthenticated = computed(() => authStore.isAuthenticated)
+const dashboardPath = computed(() => authStore.isAdmin ? '/admin/dashboard' : isAuthenticated.value ? '/dashboard' : '/login')
+const currentYear = new Date().getFullYear()
 const isDark = ref(document.documentElement.classList.contains('dark'))
 
-// GitHub URL
-const githubUrl = 'https://github.com/Wei-Shaw/sub2api'
+const accessSteps = computed(() => [
+  { title: t('home.access.choose.title'), description: t('home.access.choose.description') },
+  { title: t('home.access.key.title'), description: t('home.access.key.description') },
+  { title: t('home.access.call.title'), description: t('home.access.call.description') },
+])
 
-// Auth state
-const isAuthenticated = computed(() => authStore.isAuthenticated)
-const isAdmin = computed(() => authStore.isAdmin)
-const dashboardPath = computed(() => isAdmin.value ? '/admin/dashboard' : '/dashboard')
-const userInitial = computed(() => {
-  const user = authStore.user
-  if (!user || !user.email) return ''
-  return user.email.charAt(0).toUpperCase()
-})
+const subscriptionItems = computed(() => [
+  { label: t('home.subscription.period'), value: t('home.subscription.periodValue') },
+  { label: t('home.subscription.quota'), value: t('home.subscription.quotaValue') },
+  { label: t('home.subscription.expiry'), value: t('home.subscription.expiryValue') },
+])
 
-// Current year for footer
-const currentYear = computed(() => new Date().getFullYear())
+const visibilityItems = computed(() => [
+  { icon: 'link' as const, title: t('home.visibility.session.title'), description: t('home.visibility.session.description') },
+  { icon: 'chart' as const, title: t('home.visibility.tracking.title'), description: t('home.visibility.tracking.description') },
+  { icon: 'checkCircle' as const, title: t('home.visibility.status.title'), description: t('home.visibility.status.description') },
+])
 
-// Toggle theme
 function toggleTheme() {
   isDark.value = !isDark.value
   document.documentElement.classList.toggle('dark', isDark.value)
   localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
 }
 
-// Initialize theme
-function initTheme() {
-  const savedTheme = localStorage.getItem('theme')
-  if (
-    savedTheme === 'dark' ||
-    (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)
-  ) {
-    isDark.value = true
-    document.documentElement.classList.add('dark')
-  }
-}
-
 onMounted(() => {
-  initTheme()
-
-  // Check auth state
   authStore.checkAuth()
-
-  // Ensure public settings are loaded (will use cache if already loaded from injected config)
-  if (!appStore.publicSettingsLoaded) {
-    appStore.fetchPublicSettings()
-  }
+  if (!appStore.publicSettingsLoaded) appStore.fetchPublicSettings()
 })
 </script>
 
 <style scoped>
-/* Terminal Container */
-.terminal-container {
-  position: relative;
-  display: inline-block;
-}
-
-/* Terminal Window */
-.terminal-window {
-  width: 420px;
-  background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
-  border-radius: 14px;
-  box-shadow:
-    0 25px 50px -12px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(255, 255, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+.gateway-home {
+  min-height: 100dvh;
   overflow: hidden;
-  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg);
-  transition: transform 0.3s ease;
+  background: #0f1512;
+  color: #f2f0ea;
 }
 
-.terminal-window:hover {
-  transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(-4px);
-}
-
-/* Terminal Header */
-.terminal-header {
+.home-nav {
+  position: absolute;
+  z-index: 30;
+  top: 0;
+  left: 0;
   display: flex;
+  width: 100%;
+  height: 68px;
   align-items: center;
-  padding: 12px 16px;
-  background: rgba(30, 41, 59, 0.8);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  justify-content: space-between;
+  border-bottom: 1px solid rgb(242 240 234 / 0.14);
+  padding: 0 5vw;
 }
 
-.terminal-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.terminal-buttons span {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-
-.btn-close {
-  background: #ef4444;
-}
-.btn-minimize {
-  background: #eab308;
-}
-.btn-maximize {
-  background: #22c55e;
-}
-
-.terminal-title {
-  flex: 1;
-  text-align: center;
-  font-size: 12px;
-  font-family: ui-monospace, monospace;
-  color: #64748b;
-  margin-right: 52px;
-}
-
-/* Terminal Body */
-.terminal-body {
-  padding: 20px 24px;
-  font-family: ui-monospace, 'Fira Code', monospace;
-  font-size: 14px;
-  line-height: 2;
-}
-
-.code-line {
-  display: flex;
+.brand-wordmark,
+.brand-name,
+.hero-actions,
+.home-console-link,
+.hero-primary,
+.hero-secondary,
+.nav-icon,
+.nav-link,
+.text-link {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  opacity: 0;
-  animation: line-appear 0.5s ease forwards;
 }
 
-.line-1 {
-  animation-delay: 0.3s;
-}
-.line-2 {
-  animation-delay: 1s;
-}
-.line-3 {
-  animation-delay: 1.8s;
-}
-.line-4 {
-  animation-delay: 2.5s;
-}
-
-@keyframes line-appear {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.code-prompt {
-  color: #22c55e;
-  font-weight: bold;
-}
-.code-cmd {
-  color: #38bdf8;
-}
-.code-flag {
-  color: #a78bfa;
-}
-.code-url {
-  color: #14b8a6;
-}
-.code-comment {
-  color: #64748b;
-  font-style: italic;
-}
-.code-success {
-  color: #22c55e;
-  background: rgba(34, 197, 94, 0.15);
-  padding: 2px 8px;
+.brand-wordmark { gap: 0.75rem; }
+.brand-mark {
+  display: inline-flex;
+  height: 2rem;
+  width: 2rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(105 176 134 / 0.65);
   border-radius: 4px;
+  color: #69b086;
+  font-weight: 700;
+}
+.brand-name { gap: 0.28rem; font-size: 0.95rem; font-style: normal; }
+.brand-name strong { font-weight: 620; }
+.brand-name em { color: #69b086; font-style: normal; font-weight: 620; }
+.nav-link { height: 40px; padding: 0 0.75rem; color: #c9cec8; font-size: 0.875rem; }
+.nav-icon { height: 40px; width: 40px; justify-content: center; border-radius: 4px; color: #c9cec8; }
+.nav-icon:hover, .nav-link:hover { background: rgb(242 240 234 / 0.08); color: #fff; }
+.home-console-link {
+  height: 40px;
+  gap: 0.5rem;
+  border: 1px solid rgb(242 240 234 / 0.3);
+  border-radius: 4px;
+  padding: 0 0.9rem;
+  font-size: 0.875rem;
   font-weight: 600;
 }
-.code-response {
-  color: #fbbf24;
+.home-console-link:hover { border-color: #69b086; color: #69b086; }
+
+.hero-section {
+  position: relative;
+  display: flex;
+  min-height: 92dvh;
+  align-items: flex-end;
+  isolation: isolate;
+  overflow: hidden;
+}
+.hero-visual, .hero-scrim, .hero-grain { position: absolute; inset: 0; }
+.hero-visual img { height: 100%; width: 100%; object-fit: cover; filter: saturate(0.52) contrast(1.08) brightness(0.7) sepia(0.12) hue-rotate(72deg); }
+.hero-scrim { z-index: 1; background: linear-gradient(90deg, rgb(15 21 18 / 0.98) 0%, rgb(15 21 18 / 0.8) 38%, rgb(15 21 18 / 0.16) 76%), linear-gradient(0deg, rgb(15 21 18 / 0.86), transparent 54%); }
+.hero-grain { z-index: 2; opacity: 0.16; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.38'/%3E%3C/svg%3E"); mix-blend-mode: soft-light; }
+.hero-content { position: relative; z-index: 3; display: grid; width: 100%; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 3rem; padding: 9rem 8vw 8rem; }
+.hero-copy { max-width: 760px; animation: hero-enter 700ms cubic-bezier(.2,.7,.2,1) both; }
+.hero-copy h1 { max-width: 10ch; font-size: clamp(3.5rem, 7vw, 7rem); font-weight: 560; line-height: 0.98; letter-spacing: 0; }
+.hero-copy p { margin-top: 1.75rem; max-width: 34rem; color: #b2bcb5; font-size: clamp(1rem, 1.35vw, 1.2rem); line-height: 1.75; }
+.hero-actions { margin-top: 2rem; flex-wrap: wrap; gap: 0.75rem; }
+.hero-primary, .hero-secondary { min-height: 44px; border-radius: 4px; padding: 0.7rem 1.1rem; font-size: 0.9rem; font-weight: 650; }
+.hero-primary { gap: 0.6rem; background: #69b086; color: #0f1512; }
+.hero-primary:hover { background: #79b891; }
+.hero-secondary { border: 1px solid rgb(242 240 234 / 0.38); color: #f2f0ea; }
+.hero-secondary:hover { border-color: #f2f0ea; }
+.hero-index { display: flex; align-items: center; gap: 1rem; color: #94a198; font-family: 'Geist Mono', monospace; font-size: 0.75rem; writing-mode: vertical-rl; }
+.hero-index-line { display: block; width: 1px; height: 64px; background: #69b086; }
+.hero-foot { position: absolute; z-index: 4; right: 5vw; bottom: 0; left: 5vw; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid rgb(242 240 234 / 0.18); }
+.hero-foot span { padding: 1.25rem 0; color: #94a198; font-size: 0.78rem; }
+.hero-foot span + span { border-left: 1px solid rgb(242 240 234 / 0.12); padding-left: 1.5rem; }
+
+.home-section { padding: clamp(5rem, 9vw, 9rem) 8vw; }
+.section-heading { max-width: 660px; }
+.section-heading h2, .subscription-copy h2, .models-section h2, .visibility-section h2, .final-section h2 { font-size: clamp(2.25rem, 4.6vw, 4.5rem); font-weight: 560; line-height: 1.08; }
+.section-heading p, .subscription-copy > p, .models-section > p, .visibility-section > div > p { margin-top: 1.25rem; max-width: 38rem; color: #94a198; line-height: 1.75; }
+
+.access-section { background: #131a17; }
+.access-path { margin-top: 5rem; border-top: 1px solid #303c35; }
+.access-path li { position: relative; display: grid; grid-template-columns: 5rem minmax(0, 1fr) auto; gap: 2rem; align-items: start; border-bottom: 1px solid #303c35; padding: 2rem 0; }
+.step-number { color: #69b086; font-family: 'Geist Mono', monospace; font-size: 0.75rem; }
+.access-path h3 { font-size: 1.5rem; font-weight: 580; }
+.access-path p { margin-top: 0.5rem; color: #94a198; }
+.step-arrow { margin-top: 0.25rem; color: #4a5850; }
+
+.subscription-section { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(340px, 0.88fr); gap: 8vw; align-items: center; background: #f5f3ed; color: #242521; }
+.subscription-image { position: relative; min-height: 560px; overflow: hidden; border-radius: 6px; }
+.subscription-image::after { position: absolute; inset: 0; content: ''; background: linear-gradient(0deg, rgb(15 21 18 / 0.68), transparent 48%); }
+.subscription-image img { position: absolute; inset: 0; height: 100%; width: 100%; object-fit: cover; filter: saturate(0.45) sepia(0.16) hue-rotate(70deg); }
+.subscription-image span { position: absolute; z-index: 1; right: 1.5rem; bottom: 1.5rem; left: 1.5rem; color: #e4e3dd; font-size: 0.78rem; }
+.subscription-copy > p { color: #70736b; }
+.subscription-copy dl { margin-top: 3rem; border-top: 1px solid #d8d5cc; }
+.subscription-copy dl div { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid #d8d5cc; padding: 1rem 0; }
+.subscription-copy dt { color: #70736b; font-size: 0.85rem; }
+.subscription-copy dd { font-weight: 600; }
+.text-link { margin-top: 2rem; gap: 0.5rem; color: #1f6b4a; font-weight: 650; }
+
+.models-section { background: #0f1512; }
+.models-section > p { color: #94a198; }
+.model-rail { display: flex; margin-top: 4rem; gap: 0; overflow-x: auto; border-top: 1px solid #303c35; border-bottom: 1px solid #303c35; }
+.model-rail span { min-width: 180px; flex: 1; padding: 1.75rem 1rem; color: #b2bcb5; font-size: 1.05rem; }
+.model-rail span + span { border-left: 1px solid #303c35; }
+.model-rail .model-claude { color: #c76d4e; }
+
+.visibility-section { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 9vw; background: #171f1b; }
+.visibility-ledger { border-top: 1px solid #303c35; }
+.visibility-ledger > div { display: grid; grid-template-columns: 2rem 1fr; column-gap: 1rem; border-bottom: 1px solid #303c35; padding: 1.5rem 0; }
+.visibility-ledger svg { grid-row: 1 / span 2; color: #69b086; }
+.visibility-ledger h3 { font-weight: 620; }
+.visibility-ledger p { margin-top: 0.35rem; color: #94a198; font-size: 0.88rem; line-height: 1.6; }
+
+.final-section { display: grid; min-height: 70dvh; place-items: center; align-content: center; gap: 2rem; padding: 6rem 5vw; background: #26352d; text-align: center; }
+.final-section > p { color: #94a198; font-size: 0.82rem; }
+.final-section h2 { max-width: 12ch; }
+.home-footer { display: flex; justify-content: space-between; gap: 2rem; border-top: 1px solid #303c35; padding: 2rem 5vw; color: #77847c; font-size: 0.78rem; }
+.home-footer a:hover { color: #f2f0ea; }
+
+@keyframes hero-enter { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 767px) {
+  .home-nav { height: 62px; padding: 0 1rem; }
+  .brand-name { display: none; }
+  .home-console-link { padding: 0 0.7rem; }
+  .hero-section { min-height: 94dvh; }
+  .hero-scrim { background: linear-gradient(0deg, rgb(15 21 18 / 0.98) 0%, rgb(15 21 18 / 0.8) 58%, rgb(15 21 18 / 0.38) 100%); }
+  .hero-content { display: block; padding: 8rem 1.25rem 8.5rem; }
+  .hero-copy h1 { max-width: 8ch; font-size: clamp(3rem, 15vw, 4.7rem); }
+  .hero-copy p { max-width: 22rem; font-size: 0.98rem; }
+  .hero-index { display: none; }
+  .hero-foot { right: 1.25rem; left: 1.25rem; }
+  .hero-foot span { padding: 1rem 0; font-size: 0.68rem; }
+  .hero-foot span + span { padding-left: 0.65rem; }
+  .home-section { padding: 5rem 1.25rem; }
+  .access-path { margin-top: 3rem; }
+  .access-path li { grid-template-columns: 2.5rem 1fr; gap: 0.75rem; }
+  .step-arrow { display: none; }
+  .subscription-section, .visibility-section { grid-template-columns: 1fr; gap: 3.5rem; }
+  .subscription-image { min-height: 420px; order: 2; }
+  .model-rail { margin-right: -1.25rem; }
+  .model-rail span { min-width: 140px; }
+  .final-section { min-height: 62dvh; padding: 5rem 1.25rem; }
+  .home-footer { flex-direction: column; padding: 2rem 1.25rem; }
 }
 
-/* Blinking Cursor */
-.cursor {
-  display: inline-block;
-  width: 8px;
-  height: 16px;
-  background: #22c55e;
-  animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-  0%,
-  50% {
-    opacity: 1;
-  }
-  51%,
-  100% {
-    opacity: 0;
-  }
-}
-
-/* Dark mode adjustments */
-:deep(.dark) .terminal-window {
-  box-shadow:
-    0 25px 50px -12px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(20, 184, 166, 0.2),
-    0 0 40px rgba(20, 184, 166, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+@media (prefers-reduced-motion: reduce) {
+  .hero-copy { animation: none; }
 }
 </style>

@@ -97,7 +97,8 @@ describe('HomeView compact mode', () => {
     const wrapper = mountHome(settings)
 
     expect(wrapper.find('[data-testid="compact-home"]').exists()).toBe(false)
-    expect(wrapper.find('.terminal-container').exists()).toBe(true)
+    expect(wrapper.find('[data-testid="gateway-home"]').exists()).toBe(true)
+    expect(wrapper.find('.terminal-container').exists()).toBe(false)
   })
 
   it('links unauthenticated visitors to login', () => {

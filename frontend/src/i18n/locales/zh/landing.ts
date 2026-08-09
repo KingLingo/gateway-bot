@@ -5,6 +5,9 @@ export default {
   },
   // Home Page
   home: {
+    title: '让 AI 接入触手可及',
+    description: '订阅主流 AI API，统一管理密钥、用量与周期。接入从这里开始。',
+    compactHint: '进入控制台，继续你的 AI 接入',
     viewOnGithub: '在 GitHub 上查看',
     viewDocs: '查看文档',
     docs: '文档',
@@ -14,6 +17,63 @@ export default {
     login: '登录',
     getStarted: '立即开始',
     goToDashboard: '进入控制台',
+    heroFoot: {
+      subscription: '订阅状态，随时可见',
+      keys: '一个 API Key，统一接入',
+      usage: '周期用量，清晰可控'
+    },
+    access: {
+      title: '从订阅到调用，只需三步',
+      description: '不再在多个平台之间切换。选择权益、创建密钥，然后把 AI 接入你的工具。',
+      choose: {
+        title: '选择订阅',
+        description: '根据周期、额度和可用模型选择适合你的方案。'
+      },
+      key: {
+        title: '创建密钥',
+        description: '在控制台生成 API Key，并按需设置有效期与用量限制。'
+      },
+      call: {
+        title: '开始调用',
+        description: '使用统一端点接入现有工具，用量和状态实时回到控制台。'
+      }
+    },
+    subscription: {
+      title: '订阅不是一笔模糊的余额',
+      description: '当前方案、使用周期、额度进度和到期时间，都应该在需要时一眼找到。',
+      imageCaption: '清晰的路径，让每一次调用都有迹可循',
+      period: '使用周期',
+      periodValue: '按方案清晰展示',
+      quota: '额度进度',
+      quotaValue: '随调用实时更新',
+      expiry: '到期时间',
+      expiryValue: '提前可见、便于续订',
+      action: '查看我的订阅'
+    },
+    models: {
+      title: '模型选择，放在真正需要的位置',
+      description: '支持范围随服务持续更新。你只需关注当下任务需要的能力。'
+    },
+    visibility: {
+      title: '稳定与用量，都看得见',
+      description: '接入之后，控制台持续呈现会话、调用和渠道状态，让使用不再依赖猜测。',
+      session: {
+        title: '会话保持',
+        description: '连续请求保持上下文路径，减少不必要的切换。'
+      },
+      tracking: {
+        title: '用量追踪',
+        description: '按周期、模型和密钥查看真实使用记录。'
+      },
+      status: {
+        title: '渠道状态',
+        description: '可用性和异常状态及时呈现，便于快速判断。'
+      }
+    },
+    final: {
+      eyebrow: '准备好接入了吗？',
+      title: '从一个 API Key 开始'
+    },
     // 新增：面向用户的价值主张
     heroSubtitle: '一个密钥，畅用多个 AI 模型',
     heroDescription: '无需管理多个订阅账号，一站式接入 Claude、GPT、Gemini 等主流 AI 服务',
