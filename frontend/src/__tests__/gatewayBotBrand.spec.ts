@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
 const srcRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const repoRoot = resolve(srcRoot, '../..')
 
 function filesUnder(directory: string, extension: string): string[] {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -24,6 +25,8 @@ const userVisibleFiles = [
   resolve(srcRoot, 'views/public/LegalDocumentView.vue'),
   resolve(srcRoot, 'components/layout/AuthLayout.vue'),
   resolve(srcRoot, 'components/layout/AppSidebar.vue'),
+  resolve(srcRoot, 'stores/adminCompliance.ts'),
+  resolve(srcRoot, 'views/user/KeysView.vue'),
   resolve(srcRoot, 'i18n/locales/zh/landing.ts'),
   resolve(srcRoot, 'i18n/locales/en/landing.ts'),
   resolve(srcRoot, 'i18n/locales/zh/misc.ts'),
@@ -36,6 +39,16 @@ const userVisibleFiles = [
   ...filesUnder(resolve(srcRoot, 'components'), '.vue'),
   ...filesUnder(resolve(srcRoot, 'features'), '.vue'),
   ...filesUnder(resolve(srcRoot, 'i18n/locales'), '.ts'),
+]
+
+const serverBrandFiles = [
+  resolve(repoRoot, 'backend/internal/service/setting_parse.go'),
+  resolve(repoRoot, 'backend/internal/service/setting_public.go'),
+  resolve(repoRoot, 'backend/internal/service/admin_compliance.go'),
+  resolve(repoRoot, 'backend/internal/service/balance_notify_service.go'),
+  resolve(repoRoot, 'backend/internal/service/openai_live_attestation.go'),
+  resolve(repoRoot, 'backend/internal/web/embed_on.go'),
+  resolve(repoRoot, 'frontend/vite.config.ts'),
 ]
 
 describe('Gateway Bot public brand', () => {
@@ -51,9 +64,24 @@ describe('Gateway Bot public brand', () => {
     )
   })
 
+  it('does not restore upstream branding from server-side defaults', () => {
+    for (const file of serverBrandFiles) {
+      const source = readFileSync(file, 'utf8')
+      expect(source, file).not.toMatch(/Sub2API/)
+      expect(source, file).not.toContain('Subscription to API Conversion Platform')
+      expect(source, file).not.toContain('AI API Gateway</title>')
+    }
+  })
+
   it('removes upstream project promotion and version branding from the product UI', () => {
-    for (const file of userVisibleFiles) {
-      expect(readFileSync(file, 'utf8'), file).not.toContain('github.com/Wei-Shaw/sub2api')
+    const promotionFiles = [
+      ...userVisibleFiles,
+      resolve(repoRoot, 'backend/internal/service/admin_compliance.go'),
+      resolve(repoRoot, 'docs/legal/admin-compliance.zh.md'),
+      resolve(repoRoot, 'docs/legal/admin-compliance.en.md'),
+    ]
+    for (const file of promotionFiles) {
+      expect(readFileSync(file, 'utf8'), file).not.toContain('https://github.com/Wei-Shaw/sub2api')
     }
 
     const sidebar = readFileSync(resolve(srcRoot, 'components/layout/AppSidebar.vue'), 'utf8')

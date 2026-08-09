@@ -32,7 +32,7 @@ function injectBranding(html: string, config: { site_name?: string; site_logo?: 
   if (siteName) {
     brandedHtml = brandedHtml.replace(
       /<title>[^<]*<\/title>/i,
-      `<title>${escapeHtml(siteName)} - AI API Gateway</title>`,
+      `<title>${escapeHtml(siteName)} - 让 AI 接入触手可及</title>`,
     )
   }
 

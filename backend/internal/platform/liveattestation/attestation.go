@@ -6,8 +6,8 @@ import (
 )
 
 var (
-	ErrUnsupportedPlatform = errors.New("live attestation is only supported when Sub2API runs on macOS; Windows support is not implemented yet")
-	ErrChatGPTAppMissing   = errors.New("live attestation requires the official ChatGPT app on the Sub2API server")
+	ErrUnsupportedPlatform = errors.New("实时证明仅支持在运行 Gateway Bot 的 macOS 上使用，暂不支持 Windows")
+	ErrChatGPTAppMissing   = errors.New("实时证明要求 Gateway Bot 服务器安装官方 ChatGPT 应用")
 )
 
 // Provider 在发起 Live 请求前生成 ChatGPT DeviceCheck attestation。

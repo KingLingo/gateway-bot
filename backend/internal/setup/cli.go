@@ -51,7 +51,7 @@ func RunCLI() error {
 
 	fmt.Println()
 	fmt.Println("╔═══════════════════════════════════════════╗")
-	fmt.Println("║       Sub2API Installation Wizard         ║")
+	fmt.Println("║       Gateway Bot 安装向导                 ║")
 	fmt.Println("╚═══════════════════════════════════════════╝")
 	fmt.Println()
 

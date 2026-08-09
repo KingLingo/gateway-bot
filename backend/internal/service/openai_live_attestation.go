@@ -73,7 +73,7 @@ func (c *liveAttestationAES) Decrypt(ciphertext string) (string, error) {
 func (s *OpenAIGatewayService) prepareLiveAttestation(ctx context.Context) (string, string, error) {
 	if s == nil || s.liveAttestation == nil {
 		return "", "", &LiveAttestationUnavailableError{
-			Reason: "Sub2API has no platform DeviceCheck provider",
+			Reason: "Gateway Bot 未提供当前平台的 DeviceCheck 能力",
 		}
 	}
 	if s.liveAttestationCipher == nil {
