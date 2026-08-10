@@ -5,11 +5,12 @@ export default {
   },
   // Home Page
   home: {
-    title: 'AI access, always within reach',
-    titleLead: 'AI access',
-    titleReach: 'within',
-    titleNear: 'reach',
-    description: 'Subscribe to leading AI APIs and manage keys, usage, and billing cycles in one place.',
+    title: 'Every model. One interchange.',
+    titleLead: 'Every model.',
+    titleAccent: 'One interchange.',
+    description: 'Change one environment variable and Claude Code, Codex, and any OpenAI- or Anthropic-compatible SDK are already pointed here.',
+    heroEyebrow: 'the gateway that works nights',
+    heroDiagramLabel: 'Upstream models converge on one endpoint, then fan out to your tools',
     compactHint: 'Open the console and continue your AI integration',
     customHomeTitle: 'Custom home page',
     viewDocs: 'View Documentation',
@@ -27,37 +28,36 @@ export default {
       usage: 'Clear usage for every cycle'
     },
     access: {
-    snippetLabel: 'Unified endpoint',
-      title: 'From subscription to request in three steps',
-      description: 'Choose access, create a key, and connect AI to the tools you already use.',
+      snippetLabel: 'Unified endpoint',
+      title: 'One curl and you are through',
+      description: 'Pick a plan, mint a key, swap the endpoint. After step three, not one line of your code changes.',
       choose: { title: 'Choose a subscription', description: 'Compare cycles, quotas, and available models.' },
       key: { title: 'Create a key', description: 'Generate an API Key with the limits you need.' },
       call: { title: 'Start calling', description: 'Use one endpoint and track every request in the console.' }
     },
     subscription: {
-      title: 'A subscription should be more than a balance',
-      description: 'See your current plan, cycle, quota progress, and expiry exactly when you need them.',
-      imageCaption: 'A clear path for every request',
-      imageAlt: 'Close-up of a glass-walled corridor',
+      title: 'A balance you can actually account for',
+      description: 'Current plan, cycle, quota progress, expiry — there when you need them, not buried.',
+      ledgerLabel: 'Subscription panel · what you get to see',
       period: 'Cycle', periodValue: 'Defined by your plan',
       quota: 'Quota progress', quotaValue: 'Updated with usage',
       expiry: 'Expiry', expiryValue: 'Visible before renewal',
       action: 'View my subscriptions'
     },
     models: {
-      title: 'Model choice where it matters',
-      description: 'Supported capabilities evolve with the service. Choose what your current task needs.',
+      title: 'Switching models is a config change, not a code change',
+      description: 'Same endpoint, different model, any time. Coverage grows with the service.',
       railLabel: 'Supported model platforms',
       comingSoon: 'More models coming soon'
     },
     visibility: {
-      title: 'See stability and usage clearly',
-      description: 'Session, request, and channel status stay visible after you connect.',
+      title: 'At 3 a.m. you still know what the gateway is doing',
+      description: 'Sessions, requests, channel health — all of it stays on the console after you connect. No guessing.',
       session: { title: 'Session continuity', description: 'Keep request context on a consistent path.' },
       tracking: { title: 'Usage tracking', description: 'Review real usage by cycle, model, and key.' },
       status: { title: 'Channel status', description: 'Spot availability and exceptions without guessing.' }
     },
-    final: { eyebrow: 'Ready to connect?', title: 'Start with one API Key' },
+    final: { eyebrow: 'The night shift is already on.', title: 'Now grab a key' },
     // User-focused value proposition
     heroDescription: 'No need to manage multiple subscriptions. Access Claude, GPT, Gemini and more with a single API key',
     // Pain points section

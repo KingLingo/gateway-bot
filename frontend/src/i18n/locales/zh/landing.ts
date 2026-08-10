@@ -5,11 +5,12 @@ export default {
   },
   // Home Page
   home: {
-    title: '让 AI 接入触手可及',
-    titleLead: '让 AI 接入',
-    titleReach: '触手',
-    titleNear: '可及',
-    description: '订阅主流 AI API，统一管理密钥、用量与周期。接入从这里开始。',
+    title: '所有模型，在此换乘',
+    titleLead: '所有模型，',
+    titleAccent: '在此换乘',
+    description: '改一行环境变量，Claude Code、Codex，以及任何认 OpenAI / Anthropic 协议的 SDK，全部就位。',
+    heroEyebrow: '值夜班的网关',
+    heroDiagramLabel: '上游模型经由网关收敛成一个端点，再分发给你的工具',
     compactHint: '进入控制台，继续你的 AI 接入',
     customHomeTitle: '自定义首页',
     viewDocs: '查看文档',
@@ -27,9 +28,9 @@ export default {
       usage: '周期用量，清晰可控'
     },
     access: {
-    snippetLabel: '统一端点',
-      title: '从订阅到调用，只需三步',
-      description: '不再在多个平台之间切换。选择权益、创建密钥，然后把 AI 接入你的工具。',
+      snippetLabel: '统一端点',
+      title: 'curl 一下，就通了',
+      description: '选订阅、建密钥、换端点。走完第三步，你原来的代码一行都不用动。',
       choose: {
         title: '选择订阅',
         description: '根据周期、额度和可用模型选择适合你的方案。'
@@ -44,10 +45,9 @@ export default {
       }
     },
     subscription: {
-      title: '订阅不是一笔模糊的余额',
-      description: '当前方案、使用周期、额度进度和到期时间，都应该在需要时一眼找到。',
-      imageCaption: '清晰的路径，让每一次调用都有迹可循',
-      imageAlt: '玻璃幕墙通道的细部照片',
+      title: '余额不是玄学',
+      description: '当前方案、使用周期、额度进度和到期时间——需要的时候，一眼就能找到。',
+      ledgerLabel: '订阅面板 · 你会看到这几栏',
       period: '使用周期',
       periodValue: '按方案清晰展示',
       quota: '额度进度',
@@ -57,14 +57,14 @@ export default {
       action: '查看我的订阅'
     },
     models: {
-      title: '模型选择，放在真正需要的位置',
-      description: '支持范围随服务持续更新。你只需关注当下任务需要的能力。',
+      title: '换模型是改配置，不是改代码',
+      description: '同一个端点后面，模型随时可以换。支持范围随服务持续更新。',
       railLabel: '支持的模型平台',
       comingSoon: '更多模型敬请期待'
     },
     visibility: {
-      title: '稳定与用量，都看得见',
-      description: '接入之后，控制台持续呈现会话、调用和渠道状态，让使用不再依赖猜测。',
+      title: '凌晨三点，也知道网关在干嘛',
+      description: '会话、调用、渠道状态，接入之后一直摆在控制台里。不用猜。',
       session: {
         title: '会话保持',
         description: '连续请求保持上下文路径，减少不必要的切换。'
@@ -79,8 +79,8 @@ export default {
       }
     },
     final: {
-      eyebrow: '准备好接入了吗？',
-      title: '从一个 API Key 开始'
+      eyebrow: '值夜班的网关，已经上岗。',
+      title: '现在，拿一个 Key'
     },
     // 新增：面向用户的价值主张
     heroDescription: '无需管理多个订阅账号，一站式接入 Claude、GPT、Gemini 等主流 AI 服务',
