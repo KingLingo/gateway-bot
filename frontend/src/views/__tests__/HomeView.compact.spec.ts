@@ -101,6 +101,23 @@ describe('HomeView compact mode', () => {
     expect(wrapper.find('.terminal-container').exists()).toBe(false)
   })
 
+  it('renders localized hero semantics and an accessible brand link at runtime', () => {
+    const wrapper = mountHome()
+    const title = wrapper.get('h1.hero-title')
+    const lead = title.get('.hero-title-lead')
+    const reach = title.get('.hero-title-reach')
+    const near = title.get('.hero-title-near')
+
+    expect(title.attributes('aria-label')).toBe('home.title')
+    expect(lead.text()).toBe('home.titleLead')
+    expect(reach.text()).toBe('home.titleReach')
+    expect(near.text()).toBe('home.titleNear')
+    expect(lead.attributes('aria-hidden')).toBe('true')
+    expect(reach.attributes('aria-hidden')).toBe('true')
+    expect(near.attributes('aria-hidden')).toBe('true')
+    expect(wrapper.get('header.home-nav .brand-wordmark').attributes('aria-label')).toBe('Test site')
+  })
+
   it('links unauthenticated visitors to login', () => {
     expect(compactDestination(mountHome({ compact_home_enabled: true }))).toBe('/login')
   })

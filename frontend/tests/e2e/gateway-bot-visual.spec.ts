@@ -78,6 +78,65 @@ async function verifySurface(page: Page, route: string, testInfo: TestInfo) {
   expect(audit.bodyText).not.toContain('Wei-Shaw/sub2api')
   await expect(page.locator('body')).toBeVisible()
 
+  if (route === '/home') {
+    const heroTitle = page.locator('.hero-title')
+
+    await expect(heroTitle).toBeVisible()
+    await expect(page.locator('.hero-title-lead')).toBeVisible()
+    await expect(page.locator('.hero-title-reach')).toBeVisible()
+    await expect(page.locator('.hero-title-near')).toBeVisible()
+
+    await page.evaluate(() => document.documentElement.classList.remove('dark'))
+    const homeAudit = await page.evaluate(() => {
+      const title = document.querySelector<HTMLElement>('.hero-title')!
+      const art = document.querySelector<HTMLElement>('.hero-title-art')!
+      const nav = document.querySelector<HTMLElement>('.home-nav')!
+      const navText = nav.querySelector<HTMLElement>('.brand-wordmark')!
+      const titleRect = title.getBoundingClientRect()
+      const artRect = art.getBoundingClientRect()
+      const navStyle = getComputedStyle(nav)
+      const textStyle = getComputedStyle(navText)
+
+      const colorChannels = (value: string) =>
+        (value.match(/[\d.]+/g) ?? []).map(Number)
+      const luminance = ([red, green, blue]: number[]) => {
+        const channels = [red, green, blue].map((channel) => {
+          const normalized = channel / 255
+          return normalized <= 0.04045
+            ? normalized / 12.92
+            : ((normalized + 0.055) / 1.055) ** 2.4
+        })
+        return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2]
+      }
+      const background = colorChannels(navStyle.backgroundColor)
+      const foreground = colorChannels(textStyle.color)
+      const lighter = Math.max(luminance(background), luminance(foreground))
+      const darker = Math.min(luminance(background), luminance(foreground))
+
+      return {
+        titleRect: { left: titleRect.left, right: titleRect.right },
+        artRect: { left: artRect.left, right: artRect.right },
+        titleClientWidth: title.clientWidth,
+        titleScrollWidth: title.scrollWidth,
+        viewportWidth: window.innerWidth,
+        navBackgroundAlpha: background[3] ?? 1,
+        navTextAlpha: foreground[3] ?? 1,
+        navContrast: (lighter + 0.05) / (darker + 0.05),
+      }
+    })
+
+    expect(homeAudit.titleRect.left).toBeGreaterThanOrEqual(0)
+    expect(homeAudit.titleRect.right).toBeLessThanOrEqual(homeAudit.viewportWidth)
+    expect(homeAudit.artRect.left).toBeGreaterThanOrEqual(0)
+    expect(homeAudit.artRect.right).toBeLessThanOrEqual(homeAudit.viewportWidth)
+    if (homeAudit.viewportWidth <= 390) {
+      expect(homeAudit.titleScrollWidth).toBeLessThanOrEqual(homeAudit.titleClientWidth)
+    }
+    expect(homeAudit.navBackgroundAlpha).toBeGreaterThan(0)
+    expect(homeAudit.navTextAlpha).toBeGreaterThan(0)
+    expect(homeAudit.navContrast).toBeGreaterThanOrEqual(4.5)
+  }
+
   await testInfo.attach(route.replaceAll('/', '_') || '_root', {
     body: await page.screenshot({ fullPage: false }),
     contentType: 'image/png',

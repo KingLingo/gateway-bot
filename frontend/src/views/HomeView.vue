@@ -28,8 +28,8 @@
   </div>
 
   <div v-else data-testid="gateway-home" class="gateway-home">
-    <header class="home-nav glass-nav">
-      <RouterLink to="/home" class="brand-wordmark" aria-label="Gateway Bot 首页">
+    <header class="home-nav">
+      <RouterLink to="/home" class="brand-wordmark" :aria-label="siteName">
         <GatewayBrand :logo="siteLogo" :name="siteName" mark-class="brand-mark" name-class="brand-name" />
       </RouterLink>
 
@@ -71,10 +71,10 @@
         <div class="hero-content">
           <div class="hero-copy">
             <h1 class="hero-title" :aria-label="t('home.title')">
-              <span class="hero-title-lead" aria-hidden="true">让 AI 接入</span>
+              <span class="hero-title-lead" aria-hidden="true">{{ t('home.titleLead') }}</span>
               <span class="hero-title-art" aria-hidden="true">
-                <span class="hero-title-reach">触手</span>
-                <span class="hero-title-near">可及</span>
+                <span class="hero-title-reach" aria-hidden="true">{{ t('home.titleReach') }}</span>
+                <span class="hero-title-near" aria-hidden="true">{{ t('home.titleNear') }}</span>
               </span>
             </h1>
             <p>{{ t('home.description') }}</p>
@@ -270,6 +270,10 @@ onMounted(() => {
   justify-content: space-between;
   border-bottom: 1px solid rgb(255 255 255 / 0.12);
   padding: 0 5vw;
+  background: rgb(11 13 15 / 0.82);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 12px 36px rgb(0 0 0 / 0.2);
+  backdrop-filter: blur(18px) saturate(1.12);
+  -webkit-backdrop-filter: blur(18px) saturate(1.12);
 }
 
 .brand-wordmark,
@@ -416,7 +420,7 @@ onMounted(() => {
   .hero-scrim { background: linear-gradient(0deg, rgb(15 21 18 / 0.98) 0%, rgb(15 21 18 / 0.8) 58%, rgb(15 21 18 / 0.38) 100%); }
   .hero-content { display: block; padding: 8rem 1.25rem 8.5rem; }
   .hero-title { width: min(100%, 8.8em); font-size: clamp(3rem, 15vw, 4.7rem); }
-  .hero-title-art { transform: translateX(0.06em); }
+  .hero-title-art { transform: none; padding-right: 1px; }
   .hero-title-near { transform: translateY(0.04em) rotate(-1deg); }
   .hero-copy p { max-width: 22rem; font-size: 0.98rem; }
   .home-section { padding: 5rem 1.25rem; }

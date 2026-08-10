@@ -7,11 +7,19 @@ import { describe, expect, it } from 'vitest'
 const testDir = dirname(fileURLToPath(import.meta.url))
 const source = readFileSync(resolve(testDir, '../HomeView.vue'), 'utf8')
 const zhLanding = readFileSync(resolve(testDir, '../../i18n/locales/zh/landing.ts'), 'utf8')
+const enLanding = readFileSync(resolve(testDir, '../../i18n/locales/en/landing.ts'), 'utf8')
 
 describe('Gateway Bot home experience', () => {
-  it('uses the approved Chinese value proposition', () => {
+  it('uses matching localized hero title segments', () => {
     expect(zhLanding).toContain("title: '让 AI 接入触手可及'")
+    expect(zhLanding).toContain("titleLead: '让 AI 接入'")
+    expect(zhLanding).toContain("titleReach: '触手'")
+    expect(zhLanding).toContain("titleNear: '可及'")
     expect(zhLanding).toContain('订阅主流 AI API，统一管理密钥、用量与周期。接入从这里开始。')
+    expect(enLanding).toContain("title: 'AI access, always within reach'")
+    expect(enLanding).toContain("titleLead: 'AI access'")
+    expect(enLanding).toContain("titleReach: 'within'")
+    expect(enLanding).toContain("titleNear: 'reach'")
   })
 
   it('renders a local responsive hero visual and no upstream promotion', () => {
@@ -30,11 +38,11 @@ describe('Gateway Bot home experience', () => {
     expect(source).toContain(':deep(.brand-name) { display: none; }')
   })
 
-  it('splits the Chinese hero into an accessible asymmetric editorial composition', () => {
+  it('binds the localized hero to an accessible asymmetric editorial composition', () => {
     expect(source).toContain('<h1 class="hero-title" :aria-label="t(\'home.title\')">')
-    expect(source).toContain('<span class="hero-title-lead" aria-hidden="true">让 AI 接入</span>')
-    expect(source).toContain('<span class="hero-title-reach">触手</span>')
-    expect(source).toContain('<span class="hero-title-near">可及</span>')
+    expect(source).toContain('<span class="hero-title-lead" aria-hidden="true">{{ t(\'home.titleLead\') }}</span>')
+    expect(source).toContain('<span class="hero-title-reach" aria-hidden="true">{{ t(\'home.titleReach\') }}</span>')
+    expect(source).toContain('<span class="hero-title-near" aria-hidden="true">{{ t(\'home.titleNear\') }}</span>')
     expect(source).toMatch(/\.hero-title\s*\{[^}]*display:\s*grid;/s)
     expect(source).toMatch(/\.hero-title-art\s*\{[^}]*display:\s*flex;[^}]*justify-self:\s*end;[^}]*white-space:\s*nowrap;/s)
     expect(source).toMatch(/\.hero-title-reach\s*\{[^}]*font-family:\s*"Songti SC", "STSong", "Noto Serif SC", serif;/s)
@@ -54,6 +62,16 @@ describe('Gateway Bot home experience', () => {
     expect(source).toMatch(/\.subscription-copy\s*\{[^}]*border:\s*1px solid rgb\(255 255 255 \/ 0\.14\);/s)
   })
 
+  it('owns a dark glass navigation surface independently of the global theme', () => {
+    expect(source).toContain('<header class="home-nav">')
+    expect(source).not.toContain('home-nav glass-nav')
+    expect(source).toContain('<RouterLink to="/home" class="brand-wordmark" :aria-label="siteName">')
+    expect(source).toMatch(/\.home-nav\s*\{[^}]*background:\s*rgb\(11 13 15 \/ 0\.82\);/s)
+    expect(source).toMatch(/\.home-nav\s*\{[^}]*backdrop-filter:\s*blur\(18px\)/s)
+    expect(source).toMatch(/\.home-nav\s*\{[^}]*-webkit-backdrop-filter:\s*blur\(18px\)/s)
+    expect(source).toMatch(/\.home-nav\s*\{[^}]*box-shadow:\s*inset 0 1px 0/s)
+  })
+
   it('uses asymmetric homepage proportions without weakening contrast', () => {
     expect(source).toContain('grid-template-columns: minmax(0, 1.22fr) minmax(340px, 0.78fr)')
     expect(source).toContain('class="subscription-caption"')
@@ -63,5 +81,9 @@ describe('Gateway Bot home experience', () => {
     expect(source).toMatch(/\.visibility-section > div:first-child\s*\{[^}]*transform:\s*translateX\(/s)
     expect(source).toContain('.subscription-section, .visibility-section { grid-template-columns: 1fr; gap: 3.5rem; }')
     expect(source).toContain('.models-section > h2, .visibility-section > div:first-child { transform: none; }')
+  })
+
+  it('removes the mobile title translation that can create horizontal overflow', () => {
+    expect(source).toMatch(/@media \(max-width: 767px\)\s*\{[\s\S]*?\.hero-title-art\s*\{[^}]*transform:\s*none;[^}]*padding-right:\s*1px;[^}]*\}/s)
   })
 })

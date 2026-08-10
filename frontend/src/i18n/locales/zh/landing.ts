@@ -6,6 +6,9 @@ export default {
   // Home Page
   home: {
     title: '让 AI 接入触手可及',
+    titleLead: '让 AI 接入',
+    titleReach: '触手',
+    titleNear: '可及',
     description: '订阅主流 AI API，统一管理密钥、用量与周期。接入从这里开始。',
     compactHint: '进入控制台，继续你的 AI 接入',
     viewOnGithub: '在 GitHub 上查看',

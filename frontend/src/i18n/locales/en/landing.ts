@@ -6,6 +6,9 @@ export default {
   // Home Page
   home: {
     title: 'AI access, always within reach',
+    titleLead: 'AI access',
+    titleReach: 'within',
+    titleNear: 'reach',
     description: 'Subscribe to leading AI APIs and manage keys, usage, and billing cycles in one place.',
     compactHint: 'Open the console and continue your AI integration',
     viewOnGithub: 'View on GitHub',
