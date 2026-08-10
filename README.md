@@ -18,6 +18,27 @@ English | [中文](README_CN.md) | [日本語](README_JA.md)
 
 </div>
 
+## 🔀 Modified Version Notice / 修改版本声明
+
+**This is a modified version of [Wei-Shaw/sub2api](https://github.com/Wei-Shaw/sub2api).**
+
+This fork is maintained as **Gateway Bot** by [KingLingo](https://github.com/KingLingo).
+Modifications began on **2026-08-09** and consist principally of a redesigned web
+frontend, a renamed runtime product identity ("Sub2API" → "Gateway Bot"), and
+additional release/upstream-sync automation. The backend is otherwise unmodified
+apart from those branding strings, and this fork introduces **no database
+migrations** of its own.
+
+This program is distributed under the **GNU Lesser General Public License v3.0**,
+inherited from the upstream project. See [LICENSE](LICENSE). The original work is
+Copyright © the Sub2API authors; this modified version carries this notice in
+satisfaction of LGPL-3.0 / GPL-3.0 §5(a).
+
+本项目是 [Wei-Shaw/sub2api](https://github.com/Wei-Shaw/sub2api) 的**修改版本**，
+自 **2026-08-09** 起由 KingLingo 以 **Gateway Bot** 名义维护。主要修改为前端界面重设计、
+运行时产品名替换，以及发布与上游同步的自动化流程；后端除品牌字符串外未作改动，
+且本分支不引入任何自有数据库迁移。本项目沿用上游的 **LGPL-3.0** 许可证。
+
 ## ⚠️ Important Notice
 
 Please read the following carefully before using this project:

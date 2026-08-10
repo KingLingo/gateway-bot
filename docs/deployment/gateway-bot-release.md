@@ -22,32 +22,55 @@
 
 ## zgo 部署
 
-以下示例假设服务目录为 `/opt/gateway-bot`，systemd 服务名为 `gateway-bot`。如生产环境不同，
-仅替换目录和服务名，不修改配置文件或数据库。
+**zgo 的真实路径不是 `/opt/gateway-bot`。** 该机沿用 sub2api 时期的布局，切换品牌时
+不改路径也不改 unit，以缩小改动面：
+
+| 项 | 实际值 |
+| --- | --- |
+| 服务目录 | `/opt/sub2api` |
+| 二进制 | `/opt/sub2api/sub2api`（内容换成 Gateway Bot，文件名不变） |
+| systemd 服务 | `sub2api` |
+| 自动更新 | `sub2api-update.service` + `sub2api-update.timer`（每日 04:00±45min） |
+| 健康端点 | `http://127.0.0.1:8080/health` |
+
+上线用仓库外的运维脚本完成，不要手敲：
 
 ```bash
-set -euo pipefail
-cd /opt/gateway-bot
-timestamp="$(date +%Y%m%d-%H%M%S)"
-sudo mkdir -p backups
-sudo cp gateway-bot "backups/gateway-bot-${timestamp}"
-sudo cp -a data "backups/data-${timestamp}"
-sha256sum -c checksums.txt
-sudo install -m 0755 gateway-bot_linux_amd64 gateway-bot
-sudo systemctl restart gateway-bot
+# 两个脚本需放在同一目录
+sudo ./deploy-gateway-bot.sh --dry-run     # 只校验环境与产物
+sudo ./deploy-gateway-bot.sh 0.1.173-r4    # 备份 → 安装 → 探活 → 版本断言 → 换更新器
 ```
+
+脚本会自动把 `sub2api-update.service` 的 `ExecStart` 指向的老更新器就地替换为
+`gateway-bot-update.sh`，并保留原文件名，所以 unit 与 timer 一行都不用改。
+
+### 必须换更新器，否则静默停摆
+
+老的 `sub2api-update.sh` 有四处与本 fork 不兼容：仓库 `Wei-Shaw/sub2api`、标签 `v<ver>`、
+包名 `sub2api_<ver>_linux_amd64.tar.gz`、包内二进制 `sub2api`。更关键的是它的
+`current_version()` 只 grep `Sub2API`，遇到 Gateway Bot 二进制会因 `pipefail`
+让整条管道返回非零，脚本在读版本这一步就 `die` 退出——**不会覆盖二进制，但从此不再更新，
+而且 `die` 不发通知**。
+
+`gateway-bot-update.sh` 除了对齐上述四项，还补了一条老脚本没有的守卫：安装后除 `/health`
+之外**再断言 `--version` 等于目标版本**。只看 health 的话，"二进制被换成别的版本"这类
+事故照样 200，会被记成 `result=ok` 永远发现不了。
 
 ## health 检查
 
 部署后必须依次检查进程、健康端点、关键页面和日志：
 
 ```bash
-sudo systemctl is-active --quiet gateway-bot
+sudo systemctl is-active --quiet sub2api
+/opt/sub2api/sub2api --version | grep -q 'Gateway Bot'   # 品牌与版本断言
 curl --fail --silent --show-error http://127.0.0.1:8080/health
 curl --fail --silent --show-error https://gateway.bot.cd/home >/dev/null
 curl --fail --silent --show-error https://gateway.bot.cd/login >/dev/null
-sudo journalctl -u gateway-bot --since '-10 minutes' --no-pager
+sudo journalctl -u sub2api --since '-10 minutes' --no-pager
 ```
+
+⚠️ Caddy 在 host 未匹配到站点时会返回**空体 200**，所以外网探测不能只看状态码，
+必须校验响应体非空。
 
 登录后还要人工验证 `/dashboard`、`/subscriptions`、`/api-keys`、`/usage`、
 `/admin/dashboard`、用户、分组、账户与设置页面，确认静态资源无 404、页面无旧品牌文案。
@@ -57,12 +80,19 @@ sudo journalctl -u gateway-bot --since '-10 minutes' --no-pager
 任何 health、关键页面、数据库连接或日志检查失败，都立即回滚，不继续观察带故障的版本：
 
 ```bash
+sudo ./deploy-gateway-bot.sh --rollback     # 从最近一次 pre-* 备份回到上游二进制
+```
+
+等价的手工步骤：
+
+```bash
 set -euo pipefail
-cd /opt/gateway-bot
-sudo install -m 0755 "backups/gateway-bot-<timestamp>" gateway-bot
-sudo systemctl restart gateway-bot
+sudo install -m 0755 /opt/sub2api/backups/pre-<ver>/sub2api /opt/sub2api/sub2api
+sudo systemctl restart sub2api
 curl --fail --silent --show-error http://127.0.0.1:8080/health
 ```
 
-应用升级未包含数据库迁移时无需恢复 data。若发布包含迁移，必须先按该版本迁移说明确认兼容性，
-再决定是否恢复部署前的数据备份；禁止直接覆盖仍在写入的数据目录。
+**本 fork 相对上游基线零 migration**，schema 不会因为切换品牌而前移，因此二进制层面
+可以自由来回换，不需要恢复数据库。这与上游"迁移单向、回退 tag 不回退 DB"的常规风险
+不同，是本次敢直接上生产的根据。若将来某个 revision 引入了自有迁移，本节结论立即失效，
+必须重新评估。
