@@ -133,7 +133,12 @@ NEWBIN="$TMP/$ASSET"
 [[ -x "$NEWBIN" ]] || die "包里找不到 $ASSET"
 check_sha "$NEWBIN" "$ASSET" # 老脚本只校验 tarball，这里连包内二进制一起校验
 
-file "$NEWBIN" | grep -q "ELF 64-bit.*x86-64" || die "产物不是 linux/amd64 ELF"
+# file(1) 在精简系统上不一定有；没有就退化成读 ELF magic，不能让缺个工具把脚本打死
+if command -v file >/dev/null 2>&1; then
+  file "$NEWBIN" | grep -q "ELF 64-bit.*x86-64" || die "产物不是 linux/amd64 ELF"
+else
+  [[ "$(head -c 4 "$NEWBIN" | od -An -tx1 | tr -d ' ')" == "7f454c46" ]] || die "产物不是 ELF"
+fi
 say "产物形态校验通过"
 
 if [[ "$MODE" == "dry-run" ]]; then
