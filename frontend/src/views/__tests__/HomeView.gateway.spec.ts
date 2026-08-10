@@ -24,10 +24,24 @@ describe('Gateway Bot home experience', () => {
 
   it('renders a local responsive hero visual and no upstream promotion', () => {
     expect(source).toContain('data-testid="gateway-home"')
-    expect(source).toContain('/images/gateway-architecture-desktop.jpg')
-    expect(source).toContain('/images/gateway-architecture-mobile.jpg')
+    expect(source).toContain('/media/gateway-architecture-desktop.jpg')
+    expect(source).toContain('/media/gateway-architecture-mobile.jpg')
     expect(source).not.toContain('terminal-container')
     expect(source).not.toContain('github.com/Wei-Shaw')
+  })
+
+  // 静态图必须放在 /media/ 下，不能放 /images/。
+  // 后端 shouldBypassEmbeddedFrontend() 把 /images/ 整段让给网关 API
+  // （/images/generations、/images/edits、/images/batches… 都是根级真实路由），
+  // 内嵌前端中间件会直接放行，请求落到 API 路由上拿到 404 page not found。
+  // 这个坑在 vite preview 下看不出来（没有那层中间件），只在真机上炸，
+  // 所以只能靠断言守住。
+  it('keeps static artwork out of the gateway API namespace', () => {
+    const auth = readFileSync(resolve(testDir, '../../components/layout/AuthLayout.vue'), 'utf8')
+    const html = readFileSync(resolve(testDir, '../../../index.html'), 'utf8')
+    for (const file of [source, auth, html]) {
+      expect(file).not.toMatch(/["'(]\/(images|videos)\/[^"')]*\.(jpe?g|png|webp|avif|svg|gif)/)
+    }
   })
 
   it('keeps documentation conditional on the configured URL', () => {

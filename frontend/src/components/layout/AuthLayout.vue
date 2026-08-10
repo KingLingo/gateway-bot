@@ -2,7 +2,7 @@
   <div class="auth-shell">
     <aside class="auth-context">
       <img
-        src="/images/gateway-architecture-mobile.jpg"
+        src="/media/gateway-architecture-mobile.jpg"
         alt=""
         class="auth-context-image"
         aria-hidden="true"

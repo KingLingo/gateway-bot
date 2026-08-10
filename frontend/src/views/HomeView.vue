@@ -65,24 +65,24 @@
           <source
             media="(max-width: 767px)"
             type="image/webp"
-            srcset="/images/gateway-architecture-mobile.webp"
+            srcset="/media/gateway-architecture-mobile.webp"
             width="385"
             height="1400"
           />
           <source
             media="(max-width: 767px)"
-            srcset="/images/gateway-architecture-mobile.jpg"
+            srcset="/media/gateway-architecture-mobile.jpg"
             width="385"
             height="1400"
           />
           <source
             type="image/webp"
-            srcset="/images/gateway-architecture-desktop.webp"
+            srcset="/media/gateway-architecture-desktop.webp"
             width="1600"
             height="938"
           />
           <img
-            src="/images/gateway-architecture-desktop.jpg"
+            src="/media/gateway-architecture-desktop.jpg"
             alt=""
             width="1600"
             height="938"
@@ -163,9 +163,9 @@
       <section class="subscription-section home-section">
         <div class="subscription-image" data-reveal>
           <picture>
-            <source type="image/webp" srcset="/images/gateway-access-detail.webp" width="491" height="736" />
+            <source type="image/webp" srcset="/media/gateway-access-detail.webp" width="491" height="736" />
             <img
-              src="/images/gateway-access-detail.jpg"
+              src="/media/gateway-access-detail.jpg"
               :alt="t('home.subscription.imageAlt')"
               width="491"
               height="736"
