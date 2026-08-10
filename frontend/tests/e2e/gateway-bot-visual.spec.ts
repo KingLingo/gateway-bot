@@ -97,8 +97,15 @@ async function verifySurface(page: Page, route: string, testInfo: TestInfo) {
       const navStyle = getComputedStyle(nav)
       const textStyle = getComputedStyle(navText)
 
-      const colorChannels = (value: string) =>
-        (value.match(/[\d.]+/g) ?? []).map(Number)
+      const parseRgba = (value: string) => {
+        const channels = (value.match(/[\d.]+/g) ?? []).map(Number)
+        return {
+          rgb: channels.slice(0, 3),
+          alpha: channels[3] ?? 1,
+        }
+      }
+      const composite = (foreground: number[], alpha: number, background: number[]) =>
+        foreground.map((channel, index) => channel * alpha + background[index] * (1 - alpha))
       const luminance = ([red, green, blue]: number[]) => {
         const channels = [red, green, blue].map((channel) => {
           const normalized = channel / 255
@@ -108,10 +115,12 @@ async function verifySurface(page: Page, route: string, testInfo: TestInfo) {
         })
         return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2]
       }
-      const background = colorChannels(navStyle.backgroundColor)
-      const foreground = colorChannels(textStyle.color)
-      const lighter = Math.max(luminance(background), luminance(foreground))
-      const darker = Math.min(luminance(background), luminance(foreground))
+      const background = parseRgba(navStyle.backgroundColor)
+      const foreground = parseRgba(textStyle.color)
+      const compositedBackground = composite(background.rgb, background.alpha, [255, 255, 255])
+      const compositedForeground = composite(foreground.rgb, foreground.alpha, compositedBackground)
+      const lighter = Math.max(luminance(compositedBackground), luminance(compositedForeground))
+      const darker = Math.min(luminance(compositedBackground), luminance(compositedForeground))
 
       return {
         titleRect: { left: titleRect.left, right: titleRect.right },
@@ -119,8 +128,8 @@ async function verifySurface(page: Page, route: string, testInfo: TestInfo) {
         titleClientWidth: title.clientWidth,
         titleScrollWidth: title.scrollWidth,
         viewportWidth: window.innerWidth,
-        navBackgroundAlpha: background[3] ?? 1,
-        navTextAlpha: foreground[3] ?? 1,
+        navBackgroundAlpha: background.alpha,
+        navTextAlpha: foreground.alpha,
         navContrast: (lighter + 0.05) / (darker + 0.05),
       }
     })
@@ -132,7 +141,7 @@ async function verifySurface(page: Page, route: string, testInfo: TestInfo) {
     if (homeAudit.viewportWidth <= 390) {
       expect(homeAudit.titleScrollWidth).toBeLessThanOrEqual(homeAudit.titleClientWidth)
     }
-    expect(homeAudit.navBackgroundAlpha).toBeGreaterThan(0)
+    expect(homeAudit.navBackgroundAlpha).toBeGreaterThanOrEqual(0.75)
     expect(homeAudit.navTextAlpha).toBeGreaterThan(0)
     expect(homeAudit.navContrast).toBeGreaterThanOrEqual(4.5)
   }

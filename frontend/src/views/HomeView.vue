@@ -438,6 +438,26 @@ onMounted(() => {
   .home-footer { flex-direction: column; padding: 2rem 1.25rem; }
 }
 
+@media (prefers-reduced-transparency: reduce) {
+  .home-nav {
+    background: #111519;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .subscription-caption {
+    background: #0b0d0f;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .subscription-copy {
+    background: #14181c;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-copy { animation: none; }
 }

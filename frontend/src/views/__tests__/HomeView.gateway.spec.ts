@@ -72,6 +72,14 @@ describe('Gateway Bot home experience', () => {
     expect(source).toMatch(/\.home-nav\s*\{[^}]*box-shadow:\s*inset 0 1px 0/s)
   })
 
+  it('provides opaque local surfaces when reduced transparency is requested', () => {
+    expect(source).toMatch(/@media \(prefers-reduced-transparency: reduce\)/)
+    expect(source).toMatch(/@media \(prefers-reduced-transparency: reduce\)\s*\{[\s\S]*?\.home-nav\s*\{[^}]*background:\s*#111519;[^}]*backdrop-filter:\s*none;[^}]*-webkit-backdrop-filter:\s*none;[^}]*\}/s)
+    expect(source).toMatch(/@media \(prefers-reduced-transparency: reduce\)\s*\{[\s\S]*?\.subscription-caption\s*\{[^}]*background:\s*#0b0d0f;[^}]*backdrop-filter:\s*none;[^}]*-webkit-backdrop-filter:\s*none;[^}]*\}/s)
+    expect(source).toMatch(/@media \(prefers-reduced-transparency: reduce\)\s*\{[\s\S]*?\.subscription-copy\s*\{[^}]*background:\s*#14181c;[^}]*backdrop-filter:\s*none;[^}]*-webkit-backdrop-filter:\s*none;[^}]*\}/s)
+    expect(source).toMatch(/@media \(prefers-reduced-motion: reduce\)/)
+  })
+
   it('uses asymmetric homepage proportions without weakening contrast', () => {
     expect(source).toContain('grid-template-columns: minmax(0, 1.22fr) minmax(340px, 0.78fr)')
     expect(source).toContain('class="subscription-caption"')
