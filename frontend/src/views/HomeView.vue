@@ -48,15 +48,10 @@
         >
           {{ t('home.docs') }}
         </a>
+        <!-- 这里原来有个主题切换按钮，但落地页是整页深色摄影 + 深色蒙版，
+             没有浅色版本可切，点了什么都不会发生。一个点了没反应的控件比没有控件更糟，
+             用户会据此判定整页坏了。控制台里的切换是好用的，留在控制台。 -->
         <LocaleSwitcher />
-        <button
-          type="button"
-          class="nav-icon"
-          :aria-label="isDark ? t('home.switchToLight') : t('home.switchToDark')"
-          @click="toggleTheme"
-        >
-          <Icon :name="isDark ? 'sun' : 'moon'" size="sm" />
-        </button>
         <RouterLink :to="dashboardPath" class="home-console-link">
           {{ isAuthenticated ? t('home.dashboard') : t('home.login') }}
           <Icon name="arrowRight" size="sm" />
@@ -109,7 +104,7 @@
             <p>{{ t('home.description') }}</p>
             <div class="hero-actions">
               <RouterLink :to="dashboardPath" class="hero-primary">
-                {{ t('home.goToDashboard') }}
+                {{ isAuthenticated ? t('home.goToDashboard') : t('home.getStarted') }}
                 <Icon name="arrowRight" size="sm" />
               </RouterLink>
               <a
@@ -123,8 +118,18 @@
                 {{ t('home.viewDocs') }}
               </a>
             </div>
+            <!-- 首屏原来只有情绪，没有事实：Claude / GPT 要滚过三屏才第一次出现。
+                 一个持怀疑态度的开发者在首屏就要知道「有哪些模型、跟什么兼容、几个 Key」。 -->
+            <p class="hero-proof">{{ t('home.heroProof') }}</p>
           </div>
 
+          <!-- 这三条价值点的词条一直躺在 i18n 里没人渲染，而首屏底部正好空着一大块。
+               放成一条细分隔的横排，既补上首屏该说的话，也压住图片底部的留白。 -->
+          <ul class="hero-foot">
+            <li>{{ t('home.heroFoot.subscription') }}</li>
+            <li>{{ t('home.heroFoot.keys') }}</li>
+            <li>{{ t('home.heroFoot.usage') }}</li>
+          </ul>
         </div>
       </section>
 
@@ -145,9 +150,14 @@
               <h3>{{ step.title }}</h3>
               <p>{{ step.description }}</p>
             </div>
-            <Icon v-if="index < accessSteps.length - 1" name="arrowRight" class="step-arrow" />
           </li>
         </ol>
+        <!-- 「使用统一端点」这句话，对开发者来说不如四行 curl 有说服力。
+             base_url 用当前站点真实来源拼出来，不写死示例域名。 -->
+        <figure class="access-snippet" data-reveal>
+          <figcaption>{{ t('home.access.snippetLabel') }}</figcaption>
+          <pre><code>{{ curlSnippet }}</code></pre>
+        </figure>
       </section>
 
       <section class="subscription-section home-section">
@@ -223,7 +233,7 @@
         <p data-reveal>{{ t('home.final.eyebrow') }}</p>
         <h2 data-reveal :style="{ '--reveal-i': 1 }">{{ t('home.final.title') }}</h2>
         <RouterLink :to="dashboardPath" class="hero-primary" data-reveal :style="{ '--reveal-i': 2 }">
-          {{ t('home.goToDashboard') }}
+          {{ isAuthenticated ? t('home.goToDashboard') : t('home.getStarted') }}
           <Icon name="arrowRight" size="sm" />
         </RouterLink>
       </section>
@@ -267,7 +277,14 @@ const isHomeContentUrl = computed(() => /^(https?:\/\/)/.test(homeContent.value.
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 const dashboardPath = computed(() => authStore.isAdmin ? '/admin/dashboard' : isAuthenticated.value ? '/dashboard' : '/login')
 const currentYear = new Date().getFullYear()
-const isDark = ref(document.documentElement.classList.contains('dark'))
+// 网关可以自托管在任何域名下，示例里写死一个域名就是错的
+const apiOrigin = computed(() => (typeof window === 'undefined' ? '' : window.location.origin))
+const curlSnippet = computed(() => [
+  `curl ${apiOrigin.value}/v1/chat/completions \\`,
+  '  -H "Authorization: Bearer $GATEWAY_API_KEY" \\',
+  '  -H "Content-Type: application/json" \\',
+  `  -d '{"model":"MODEL_ID","messages":[{"role":"user","content":"Hello"}]}'`,
+].join('\n'))
 
 // 导航原本是 absolute，滚过首屏后「进入控制台」就永久离场了。改成 fixed 常驻，
 // 再用下滚收起 / 上滚归位避免它一直占着移动端视口。
@@ -293,12 +310,6 @@ const visibilityItems = computed(() => [
   { icon: 'chart' as const, title: t('home.visibility.tracking.title'), description: t('home.visibility.tracking.description') },
   { icon: 'checkCircle' as const, title: t('home.visibility.status.title'), description: t('home.visibility.status.description') },
 ])
-
-function toggleTheme() {
-  isDark.value = !isDark.value
-  document.documentElement.classList.toggle('dark', isDark.value)
-  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
-}
 
 function prefersReducedMotion() {
   return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true
@@ -385,6 +396,8 @@ onBeforeUnmount(() => {
   transition: transform 320ms cubic-bezier(.2,.7,.2,1);
 }
 .nav-tucked .home-nav { transform: translateY(-100%); }
+/* 收起的导航仍然在 tab 顺序里。不把它放回来，键盘用户会把焦点交给一个不可见的按钮。 */
+.nav-tucked .home-nav:focus-within { transform: none; }
 
 .brand-wordmark,
 :deep(.brand-name),
@@ -435,26 +448,67 @@ onBeforeUnmount(() => {
 .hero-title-art { display: flex; justify-self: end; align-items: baseline; gap: 0.16em; white-space: nowrap; transform: translateX(0.22em); }
 .hero-title-reach { color: #f2f4f5; font-family: "Songti SC", "STSong", "Noto Serif SC", serif; font-weight: 700; letter-spacing: -0.12em; }
 .hero-title-near { color: #a6cbaa; font-family: "Kaiti SC", "STKaiti", "Noto Serif SC", serif; font-weight: 600; letter-spacing: -0.08em; transform: translateY(0.08em) rotate(-2deg); }
-.hero-copy p { margin-top: 1.5rem; max-width: 34rem; color: #b2bbc3; font-size: clamp(1rem, 1.35vw, 1.2rem); line-height: 1.75; }
+.hero-copy > p:not(.hero-proof) { margin-top: 1.5rem; max-width: 36rem; color: #b2bbc3; font-size: clamp(1rem, 1.35vw, 1.2rem); line-height: 1.75; }
+.hero-proof { margin-top: 1.5rem; color: #94a198; font-family: SFMono-Regular, Menlo, monospace; font-size: 0.78rem; letter-spacing: 0.02em; }
 .hero-actions { margin-top: 2rem; flex-wrap: wrap; gap: 0.75rem; }
 .hero-primary, .hero-secondary { min-height: 44px; border-radius: 6px; padding: 0.7rem 1.1rem; font-size: 0.9rem; font-weight: 650; }
 .hero-primary { gap: 0.6rem; background: #dfe9e0; color: #172018; }
 .hero-primary:hover { background: #f0f5f1; }
+
+.hero-foot {
+  margin-top: clamp(3rem, 7vw, 6rem);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid rgb(223 233 224 / 0.16);
+  animation: hero-enter 700ms cubic-bezier(.2,.7,.2,1) both;
+  animation-delay: 160ms;
+}
+.hero-foot li { padding: 1.1rem 1.25rem 0 0; color: #c3ccd2; font-size: 0.9rem; letter-spacing: 0.01em; }
+.hero-foot li + li { border-left: 1px solid rgb(223 233 224 / 0.16); padding-left: 1.75rem; }
 .hero-secondary { border: 1px solid rgb(255 255 255 / 0.34); color: #f5f7f8; }
 .hero-secondary:hover { border-color: #f5f7f8; }
 
 .home-section { padding: clamp(5rem, 9vw, 9rem) 8vw; }
-.section-heading { max-width: 660px; }
-.section-heading h2, .subscription-copy h2, .models-section h2, .visibility-section h2, .final-section h2 { font-size: clamp(2.25rem, 4.6vw, 4.5rem); font-weight: 560; line-height: 1.08; text-wrap: balance; }
+.section-heading { max-width: 880px; }
+/* 原来五个 section 的 h2 全是 4.6vw，整页六屏用同一个音量在喊，等于没有层级。
+   正文段落降到 3.4vw，只把最大号留给收尾的行动召唤。 */
+.section-heading h2, .subscription-copy h2, .models-section h2, .visibility-section h2, .final-section h2 { font-size: clamp(2rem, 3.4vw, 3.25rem); font-weight: 560; line-height: 1.08; }
+.final-section h2 { font-size: clamp(2.5rem, 4.6vw, 4.5rem); }
+
+/* ---- 中文标题的断行 ----
+   中文没有词间空格，浏览器可以在任意两个字之间断行，所以一个放不下的标题会被
+   切成「订阅不 / 是一笔模 / 糊的余额」这种词内断裂。这在中文里是明确的排版事故。
+   治本的办法不是调断行规则（CSS 管不了中文词边界），而是让标题真的放得下：
+   窄栏里的标题必须用配得上栏宽的字号，不能继续吃 4.6vw 这个视口尺寸。
+   下面两条按各自容器实测宽度定档（订阅面板内宽约 347px、可见性左栏约 432px）。 */
+.subscription-copy h2 { font-size: clamp(1.6rem, 2.15vw, 2.15rem); }
+.visibility-section h2 { font-size: clamp(1.75rem, 2.9vw, 2.9rem); }
+
+/* text-wrap: balance 是为拉丁文的参差右边界设计的；中文里它只会把「用量」
+   这类双字词拆到两行去，所以只给英文开。 */
+.section-heading h2:lang(en),
+.subscription-copy h2:lang(en),
+.models-section h2:lang(en),
+.visibility-section h2:lang(en),
+.final-section h2:lang(en) { text-wrap: balance; }
+
 .section-heading p, .subscription-copy > p, .models-section > p, .visibility-section > div > p { margin-top: 1.25rem; max-width: 38rem; color: #94a198; line-height: 1.75; text-wrap: pretty; }
 
 .access-section { background: #14181c; }
-.access-path { position: relative; margin-top: 5rem; border-top: 1px solid #32393f; }
-.access-path li { position: relative; display: grid; grid-template-columns: 5rem minmax(0, 1fr) auto; gap: 2rem; align-items: start; border-bottom: 1px solid #303c35; padding: 2rem 0; }
+/* 「只需三步」是一个序列，序列在桌面端应该横着读。原来三步纵向堆叠、每行末尾还挂一个
+   向右的箭头，箭头指向的是页面外边距而不是下一步——版式和内容互相矛盾。
+   改成三列并排，用竖向细线 + 序号承担顺序感，箭头因此可以整个去掉。 */
+.access-path { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 5rem; border-top: 1px solid #32393f; }
+.access-path li { position: relative; padding: 2.5rem 2.5rem 2.5rem 0; }
+.access-path li + li { border-left: 1px solid #303c35; padding-left: 2.5rem; }
+.step-node { margin-bottom: 1.25rem; }
 .step-node { display: inline-flex; height: 1.75rem; width: 1.75rem; align-items: center; justify-content: center; border: 1px solid #7fa286; border-radius: 999px; color: #dfe9e0; font-family: SFMono-Regular, Menlo, monospace; font-size: 0.72rem; }
 .access-path h3 { font-size: 1.5rem; font-weight: 580; }
 .access-path p { margin-top: 0.5rem; color: #94a198; }
-.step-arrow { margin-top: 0.25rem; color: #4a5850; }
+
+.access-snippet { margin-top: 3.5rem; overflow-x: auto; border: 1px solid #32393f; border-radius: 8px; background: #0f1316; }
+.access-snippet figcaption { border-bottom: 1px solid #32393f; padding: 0.7rem 1.25rem; color: #94a198; font-family: SFMono-Regular, Menlo, monospace; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; }
+.access-snippet pre { padding: 1.25rem; color: #cfd8d2; font-family: SFMono-Regular, Menlo, monospace; font-size: 0.82rem; line-height: 1.85; }
 
 .subscription-section { display: grid; grid-template-columns: minmax(0, 1.22fr) minmax(340px, 0.78fr); gap: 8vw; align-items: center; background: #0b0d0f; color: #f5f7f8; }
 .subscription-image { position: relative; min-height: 560px; overflow: hidden; border-radius: 8px; }
@@ -488,8 +542,8 @@ onBeforeUnmount(() => {
   padding: clamp(1.5rem, 3vw, 2.5rem);
   background: rgb(20 24 28 / 0.82);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 24px 60px rgb(0 0 0 / 0.22);
-  backdrop-filter: blur(22px) saturate(1.08);
-  -webkit-backdrop-filter: blur(22px) saturate(1.08);
+  /* 这里没有 backdrop-filter：这块面板背后是纯色 #0b0d0f，模糊一层纯色什么都看不出来，
+     只白白换来一个合成层。导航和图注的毛玻璃背后确实有内容，那两处保留。 */
 }
 .subscription-copy > p { color: #9da6ae; }
 .subscription-copy dl { margin-top: 3rem; border-top: 1px solid #32393f; }
@@ -501,7 +555,8 @@ onBeforeUnmount(() => {
 .models-section { background: #0b0d0f; }
 .models-section > h2 { transform: translateX(0.8rem); }
 .models-section > p { color: #9da6ae; }
-.model-rail { display: grid; grid-template-columns: 1.15fr .85fr 1.45fr; margin-top: 4rem; border: 1px solid #32393f; border-radius: 8px; overflow: hidden; }
+/* 最宽的一格原本给了「敬请期待」，把版面让给了唯一没有内容的东西 */
+.model-rail { display: grid; grid-template-columns: 1.2fr 1.2fr .6fr; margin-top: 4rem; border: 1px solid #32393f; border-radius: 8px; overflow: hidden; }
 .model-identity, .model-coming-soon { display: flex; align-items: center; gap: 0.75rem; min-height: 104px; padding: 1.5rem; font-size: 1.1rem; font-weight: 620; }
 .model-identity + .model-identity, .model-coming-soon { border-left: 1px solid #32393f; }
 .model-gpt { color: #e4e8eb; }
@@ -518,8 +573,11 @@ onBeforeUnmount(() => {
 
 .final-section { display: grid; min-height: 70dvh; place-items: center; align-content: center; gap: 2rem; padding: 6rem 5vw; background: #28362d; text-align: center; }
 .final-section > p { color: #b2bbc3; font-size: 0.82rem; }
-.final-section h2 { max-width: 12ch; }
-.home-footer { display: flex; justify-content: space-between; gap: 2rem; border-top: 1px solid #32393f; padding: 2rem 5vw; color: #737d86; font-size: 0.78rem; }
+/* 12ch 是按英文标题的理想行长定的；中文「从一个 API Key 开始」在这个宽度下会把
+   「开始」孤零零挤到第二行，所以中文放宽到刚好一行放得下。 */
+.final-section h2 { max-width: 17ch; }
+.final-section h2:lang(en) { max-width: 12ch; }
+.home-footer { display: flex; justify-content: space-between; gap: 2rem; border-top: 1px solid #32393f; padding: 2rem 5vw; color: #8b95a0; font-size: 0.78rem; }
 .home-footer a:hover { color: #f5f7f8; }
 
 /* ---- 交互状态 ----
@@ -559,7 +617,6 @@ onBeforeUnmount(() => {
 [data-testid="compact-home"] :deep(*:focus-visible) {
   outline: 2px solid #a5c1a9;
   outline-offset: 3px;
-  border-radius: 4px;
 }
 
 /* ---- 入场动效 ----
@@ -586,11 +643,22 @@ onBeforeUnmount(() => {
   .hero-title { width: min(100%, 8.8em); font-size: clamp(3rem, 15vw, 4.7rem); }
   .hero-title-art { transform: none; padding-right: 1px; }
   .hero-title-near { transform: translateY(0.04em) rotate(-1deg); }
-  .hero-copy p { max-width: 22rem; font-size: 0.98rem; }
+  .hero-copy > p:not(.hero-proof) { max-width: 22rem; font-size: 0.98rem; }
+  .hero-proof { font-size: 0.72rem; }
+  /* 三列在 390px 下每列只剩 40 多 px，必须竖排；分隔线也从竖改横 */
+  .hero-foot { margin-top: 2.5rem; grid-template-columns: 1fr; }
+  .hero-foot li { padding: 0.75rem 0; font-size: 0.85rem; }
+  .hero-foot li + li { border-left: 0; border-top: 1px solid rgb(223 233 224 / 0.16); padding-left: 0; }
   .home-section { padding: 5rem 1.25rem; }
+  .access-snippet { margin-top: 2.5rem; }
+  /* 窄屏上让它折行，而不是逼用户横向拖着读一条 curl */
+  .access-snippet pre { padding: 1rem; font-size: 0.72rem; white-space: pre-wrap; overflow-wrap: anywhere; }
   .access-path { margin-top: 3rem; }
-  .access-path li { grid-template-columns: 2.5rem 1fr; gap: 0.75rem; }
-  .step-arrow { display: none; }
+  /* 窄屏放不下三列，回到纵向堆叠：分隔线从竖线换成横线 */
+  .access-path { grid-template-columns: 1fr; }
+  .access-path li { display: grid; grid-template-columns: 2.5rem 1fr; gap: 0.75rem; padding: 1.75rem 0; }
+  .access-path li + li { border-left: 0; border-top: 1px solid #303c35; padding-left: 0; }
+  .step-node { margin-bottom: 0; }
   .subscription-section, .visibility-section { grid-template-columns: 1fr; gap: 3.5rem; }
   .models-section > h2, .visibility-section > div:first-child { transform: none; }
   .subscription-image { min-height: 420px; order: 2; }
@@ -623,7 +691,7 @@ onBeforeUnmount(() => {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-copy { animation: none; }
+  .hero-copy, .hero-foot { animation: none; }
   .home-nav { transition: none; }
   .nav-tucked .home-nav { transform: none; }
   .reveal-ready [data-reveal] { opacity: 1; transform: none; }

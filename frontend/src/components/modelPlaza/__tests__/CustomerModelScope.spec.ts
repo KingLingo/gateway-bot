@@ -20,6 +20,8 @@ import ModelPlazaContent from '../ModelPlazaContent.vue'
 
 const componentDir = dirname(fileURLToPath(import.meta.url))
 const home = readFileSync(resolve(componentDir, '../../../views/HomeView.vue'), 'utf8')
+const zhLanding = readFileSync(resolve(componentDir, '../../../i18n/locales/zh/landing.ts'), 'utf8')
+const enLanding = readFileSync(resolve(componentDir, '../../../i18n/locales/en/landing.ts'), 'utf8')
 
 describe('Customer model scope', () => {
   it('renders only OpenAI and Anthropic groups for customers', () => {
@@ -58,7 +60,10 @@ describe('Customer model scope', () => {
   it('does not promote Gemini or Grok on the public home surface', () => {
     expect(home).toContain('GPT')
     expect(home).toContain('Claude')
-    expect(home).toContain('更多模型敬请期待')
+    // 首页的"更多模型"文案已走 i18n，这里断言绑定 + 两份词条，避免硬编码中文回潮
+    expect(home).toContain("t('home.models.comingSoon')")
+    expect(zhLanding).toContain("comingSoon: '更多模型敬请期待'")
+    expect(enLanding).toContain("comingSoon: 'More models coming soon'")
     expect(home).not.toContain('<span>Gemini</span>')
     expect(home).not.toContain('<span>Grok</span>')
   })
