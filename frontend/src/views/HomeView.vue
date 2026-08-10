@@ -4,7 +4,7 @@
       v-if="isHomeContentUrl"
       :src="homeContent.trim()"
       class="h-screen w-full border-0"
-      title="自定义首页"
+      :title="t('home.customHomeTitle')"
       sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
     />
     <div v-else v-html="homeContent" />
@@ -27,7 +27,12 @@
     </RouterLink>
   </div>
 
-  <div v-else data-testid="gateway-home" class="gateway-home">
+  <div
+    v-else
+    data-testid="gateway-home"
+    class="gateway-home"
+    :class="{ 'nav-tucked': navTucked, 'reveal-ready': revealReady }"
+  >
     <header class="home-nav">
       <RouterLink to="/home" class="brand-wordmark" :aria-label="siteName">
         <GatewayBrand :logo="siteLogo" :name="siteName" mark-class="brand-mark" name-class="brand-name" />
@@ -62,8 +67,32 @@
     <main>
       <section class="hero-section">
         <picture class="hero-visual" aria-hidden="true">
-          <source media="(max-width: 767px)" srcset="/images/gateway-architecture-mobile.jpg" />
-          <img src="/images/gateway-architecture-desktop.jpg" alt="" fetchpriority="high" />
+          <source
+            media="(max-width: 767px)"
+            type="image/webp"
+            srcset="/images/gateway-architecture-mobile.webp"
+            width="385"
+            height="1400"
+          />
+          <source
+            media="(max-width: 767px)"
+            srcset="/images/gateway-architecture-mobile.jpg"
+            width="385"
+            height="1400"
+          />
+          <source
+            type="image/webp"
+            srcset="/images/gateway-architecture-desktop.webp"
+            width="1600"
+            height="938"
+          />
+          <img
+            src="/images/gateway-architecture-desktop.jpg"
+            alt=""
+            width="1600"
+            height="938"
+            fetchpriority="high"
+          />
         </picture>
         <div class="hero-scrim" />
         <div class="hero-grain" />
@@ -100,12 +129,17 @@
       </section>
 
       <section class="access-section home-section">
-        <div class="section-heading">
+        <div class="section-heading" data-reveal>
           <h2>{{ t('home.access.title') }}</h2>
           <p>{{ t('home.access.description') }}</p>
         </div>
         <ol class="access-path">
-          <li v-for="(step, index) in accessSteps" :key="step.title">
+          <li
+            v-for="(step, index) in accessSteps"
+            :key="step.title"
+            data-reveal
+            :style="{ '--reveal-i': index }"
+          >
             <span class="step-node" aria-hidden="true">{{ index + 1 }}</span>
             <div>
               <h3>{{ step.title }}</h3>
@@ -117,11 +151,21 @@
       </section>
 
       <section class="subscription-section home-section">
-        <div class="subscription-image">
-          <img src="/images/gateway-access-detail.jpg" alt="玻璃建筑通道细节" loading="lazy" />
+        <div class="subscription-image" data-reveal>
+          <picture>
+            <source type="image/webp" srcset="/images/gateway-access-detail.webp" width="491" height="736" />
+            <img
+              src="/images/gateway-access-detail.jpg"
+              :alt="t('home.subscription.imageAlt')"
+              width="491"
+              height="736"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
           <span class="subscription-caption">{{ t('home.subscription.imageCaption') }}</span>
         </div>
-        <div class="subscription-copy">
+        <div class="subscription-copy" data-reveal>
           <h2>{{ t('home.subscription.title') }}</h2>
           <p>{{ t('home.subscription.description') }}</p>
           <dl>
@@ -138,9 +182,9 @@
       </section>
 
       <section class="models-section home-section">
-        <h2>{{ t('home.models.title') }}</h2>
-        <p>{{ t('home.models.description') }}</p>
-        <div class="model-rail" aria-label="支持的模型平台">
+        <h2 data-reveal>{{ t('home.models.title') }}</h2>
+        <p data-reveal>{{ t('home.models.description') }}</p>
+        <div class="model-rail" :aria-label="t('home.models.railLabel')" data-reveal>
           <div class="model-identity model-gpt">
             <ModelIcon model="openai" size="24px" aria-hidden="true" />
             <span>GPT</span>
@@ -151,18 +195,23 @@
           </div>
           <div class="model-coming-soon">
             <Icon name="sparkles" size="sm" aria-hidden="true" />
-            <span>更多模型敬请期待</span>
+            <span>{{ t('home.models.comingSoon') }}</span>
           </div>
         </div>
       </section>
 
       <section class="visibility-section home-section">
-        <div>
+        <div data-reveal>
           <h2>{{ t('home.visibility.title') }}</h2>
           <p>{{ t('home.visibility.description') }}</p>
         </div>
         <div class="visibility-ledger">
-          <div v-for="item in visibilityItems" :key="item.title">
+          <div
+            v-for="(item, index) in visibilityItems"
+            :key="item.title"
+            data-reveal
+            :style="{ '--reveal-i': index }"
+          >
             <Icon :name="item.icon" />
             <h3>{{ item.title }}</h3>
             <p>{{ item.description }}</p>
@@ -171,9 +220,9 @@
       </section>
 
       <section class="final-section">
-        <p>{{ t('home.final.eyebrow') }}</p>
-        <h2>{{ t('home.final.title') }}</h2>
-        <RouterLink :to="dashboardPath" class="hero-primary">
+        <p data-reveal>{{ t('home.final.eyebrow') }}</p>
+        <h2 data-reveal :style="{ '--reveal-i': 1 }">{{ t('home.final.title') }}</h2>
+        <RouterLink :to="dashboardPath" class="hero-primary" data-reveal :style="{ '--reveal-i': 2 }">
           {{ t('home.goToDashboard') }}
           <Icon name="arrowRight" size="sm" />
         </RouterLink>
@@ -195,7 +244,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAppStore, useAuthStore } from '@/stores'
 import Icon from '@/components/icons/Icon.vue'
@@ -219,6 +268,13 @@ const isAuthenticated = computed(() => authStore.isAuthenticated)
 const dashboardPath = computed(() => authStore.isAdmin ? '/admin/dashboard' : isAuthenticated.value ? '/dashboard' : '/login')
 const currentYear = new Date().getFullYear()
 const isDark = ref(document.documentElement.classList.contains('dark'))
+
+// 导航原本是 absolute，滚过首屏后「进入控制台」就永久离场了。改成 fixed 常驻，
+// 再用下滚收起 / 上滚归位避免它一直占着移动端视口。
+const navTucked = ref(false)
+// 入场动效的开关：只有 JS 跑起来且用户没要求减少动效时才置 true，
+// 否则 [data-reveal] 保持默认可见，不会出现「JS 挂了整页空白」。
+const revealReady = ref(false)
 
 const accessSteps = computed(() => [
   { title: t('home.access.choose.title'), description: t('home.access.choose.description') },
@@ -244,9 +300,59 @@ function toggleTheme() {
   localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
 }
 
+function prefersReducedMotion() {
+  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true
+}
+
+let lastScrollY = 0
+let scrollQueued = false
+let revealObserver: IntersectionObserver | null = null
+
+function handleScroll() {
+  if (scrollQueued) return
+  scrollQueued = true
+  requestAnimationFrame(() => {
+    const y = Math.max(window.scrollY, 0)
+    // 阈值 160 是为了让首屏顶部的轻微回弹不触发收起
+    navTucked.value = y > 160 && y > lastScrollY
+    lastScrollY = y
+    scrollQueued = false
+  })
+}
+
+function setupReveal() {
+  if (typeof IntersectionObserver === 'undefined') return
+  const targets = document.querySelectorAll<HTMLElement>('.gateway-home [data-reveal]')
+  if (!targets.length) return
+
+  revealReady.value = true
+  revealObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue
+        entry.target.classList.add('is-revealed')
+        revealObserver?.unobserve(entry.target)
+      }
+    },
+    { rootMargin: '0px 0px -12% 0px', threshold: 0.12 }
+  )
+  targets.forEach((el) => revealObserver!.observe(el))
+}
+
 onMounted(() => {
   authStore.checkAuth()
   if (!appStore.publicSettingsLoaded) appStore.fetchPublicSettings()
+
+  if (prefersReducedMotion()) return
+  lastScrollY = Math.max(window.scrollY, 0)
+  window.addEventListener('scroll', handleScroll, { passive: true })
+  setupReveal()
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll)
+  revealObserver?.disconnect()
+  revealObserver = null
 })
 </script>
 
@@ -256,10 +362,12 @@ onMounted(() => {
   overflow: hidden;
   background: #0b0d0f;
   color: #f5f7f8;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .home-nav {
-  position: absolute;
+  position: fixed;
   z-index: 30;
   top: 0;
   left: 0;
@@ -274,7 +382,9 @@ onMounted(() => {
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 12px 36px rgb(0 0 0 / 0.2);
   backdrop-filter: blur(18px) saturate(1.12);
   -webkit-backdrop-filter: blur(18px) saturate(1.12);
+  transition: transform 320ms cubic-bezier(.2,.7,.2,1);
 }
+.nav-tucked .home-nav { transform: translateY(-100%); }
 
 .brand-wordmark,
 :deep(.brand-name),
@@ -335,8 +445,8 @@ onMounted(() => {
 
 .home-section { padding: clamp(5rem, 9vw, 9rem) 8vw; }
 .section-heading { max-width: 660px; }
-.section-heading h2, .subscription-copy h2, .models-section h2, .visibility-section h2, .final-section h2 { font-size: clamp(2.25rem, 4.6vw, 4.5rem); font-weight: 560; line-height: 1.08; }
-.section-heading p, .subscription-copy > p, .models-section > p, .visibility-section > div > p { margin-top: 1.25rem; max-width: 38rem; color: #94a198; line-height: 1.75; }
+.section-heading h2, .subscription-copy h2, .models-section h2, .visibility-section h2, .final-section h2 { font-size: clamp(2.25rem, 4.6vw, 4.5rem); font-weight: 560; line-height: 1.08; text-wrap: balance; }
+.section-heading p, .subscription-copy > p, .models-section > p, .visibility-section > div > p { margin-top: 1.25rem; max-width: 38rem; color: #94a198; line-height: 1.75; text-wrap: pretty; }
 
 .access-section { background: #14181c; }
 .access-path { position: relative; margin-top: 5rem; border-top: 1px solid #32393f; }
@@ -349,6 +459,8 @@ onMounted(() => {
 .subscription-section { display: grid; grid-template-columns: minmax(0, 1.22fr) minmax(340px, 0.78fr); gap: 8vw; align-items: center; background: #0b0d0f; color: #f5f7f8; }
 .subscription-image { position: relative; min-height: 560px; overflow: hidden; border-radius: 8px; }
 .subscription-image::after { position: absolute; inset: 0; content: ''; background: linear-gradient(0deg, rgb(15 21 18 / 0.68), transparent 48%); }
+/* picture 只是 webp/jpg 的选择器容器，不应该在布局里留下一个空的行内盒 */
+.subscription-image picture { display: contents; }
 .subscription-image img { position: absolute; inset: 0; height: 100%; width: 100%; object-fit: cover; filter: saturate(0.45) sepia(0.16) hue-rotate(70deg); }
 .subscription-caption {
   position: absolute;
@@ -410,6 +522,58 @@ onMounted(() => {
 .home-footer { display: flex; justify-content: space-between; gap: 2rem; border-top: 1px solid #32393f; padding: 2rem 5vw; color: #737d86; font-size: 0.78rem; }
 .home-footer a:hover { color: #f5f7f8; }
 
+/* ---- 交互状态 ----
+   原来 hover 只换颜色且没有 transition，是硬切；也没有按压反馈。
+   :active 规则必须排在 :hover 之后（同优先级按源码顺序生效）。 */
+.home-console-link,
+.hero-primary,
+.hero-secondary,
+.nav-icon,
+.nav-link,
+.text-link,
+.home-footer a {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms cubic-bezier(.2,.7,.2,1);
+}
+.hero-primary:hover, .hero-secondary:hover { transform: translateY(-1px); }
+.home-console-link:active,
+.hero-primary:active,
+.hero-secondary:active,
+.nav-icon:active,
+.nav-link:active { transform: translateY(1px); }
+
+.home-console-link :deep(svg),
+.hero-primary :deep(svg),
+.text-link :deep(svg) { transition: transform 200ms cubic-bezier(.2,.7,.2,1); }
+.home-console-link:hover :deep(svg),
+.hero-primary:hover :deep(svg),
+.text-link:hover :deep(svg) { transform: translateX(3px); }
+.text-link:hover { color: #dfe9e0; }
+
+/* 全局 :focus-visible 用的是 --gb-brand(#405647)，落在本页固定的 #0b0d0f 底上
+   只有 2.44:1，低于 WCAG 2.2 对焦点指示器要求的 3:1。这里换成浅鼠尾草(9.9:1)。 */
+.gateway-home :deep(*:focus-visible),
+[data-testid="compact-home"] :deep(*:focus-visible) {
+  outline: 2px solid #a5c1a9;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ---- 入场动效 ----
+   .reveal-ready 只有 JS 挂载且未开启「减少动效」时才加上，
+   因此无 JS / 减少动效场景下 [data-reveal] 始终是可见的常态。 */
+.reveal-ready [data-reveal] { opacity: 0; transform: translateY(16px); }
+.reveal-ready [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 620ms cubic-bezier(.2,.7,.2,1) calc(var(--reveal-i, 0) * 70ms),
+    transform 620ms cubic-bezier(.2,.7,.2,1) calc(var(--reveal-i, 0) * 70ms);
+}
+
 @keyframes hero-enter { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 
 @media (max-width: 767px) {
@@ -460,5 +624,23 @@ onMounted(() => {
 
 @media (prefers-reduced-motion: reduce) {
   .hero-copy { animation: none; }
+  .home-nav { transition: none; }
+  .nav-tucked .home-nav { transform: none; }
+  .reveal-ready [data-reveal] { opacity: 1; transform: none; }
+  .home-console-link,
+  .hero-primary,
+  .hero-secondary,
+  .nav-icon,
+  .nav-link,
+  .text-link,
+  .home-footer a,
+  .home-console-link :deep(svg),
+  .hero-primary :deep(svg),
+  .text-link :deep(svg) { transition: none; }
+  .hero-primary:hover,
+  .hero-secondary:hover,
+  .home-console-link:hover :deep(svg),
+  .hero-primary:hover :deep(svg),
+  .text-link:hover :deep(svg) { transform: none; }
 }
 </style>
