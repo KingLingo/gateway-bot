@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Gateway Bot</title>
+  <desc id="desc">A compact mark with gateway frames, a routing path, and an AI spark.</desc>
+  <defs>
+    <linearGradient id="surface" x1="18" y1="16" x2="110" y2="114" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#32383E"/>
+      <stop offset="1" stop-color="#15191D"/>
+    </linearGradient>
+    <linearGradient id="route-gradient" x1="42" y1="38" x2="91" y2="87" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#BCD8C1"/>
+      <stop offset="1" stop-color="#5B8864"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="112" height="112" rx="28" fill="url(#surface)"/>
+  <rect x="8.75" y="8.75" width="110.5" height="110.5" rx="27.25" fill="none" stroke="#FFFFFF" stroke-opacity=".18" stroke-width="1.5"/>
+  <path class="gateway-frame" d="M35 34h31c6.1 0 11 4.9 11 11v18" fill="none" stroke="#DCE1E5" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/>
+  <path class="gateway-frame" d="M93 94H62c-6.1 0-11-4.9-11-11V65" fill="none" stroke="#77818A" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/>
+  <path class="route" d="M45 48c0-4.4 3.6-8 8-8h12c4.4 0 8 3.6 8 8v16c0 4.4 3.6 8 8 8h2" fill="none" stroke="url(#route-gradient)" stroke-linecap="round" stroke-linejoin="round" stroke-width="6"/>
+  <g class="ai-spark">
+    <path d="m90 62 2.8 6.2L99 71l-6.2 2.8L90 80l-2.8-6.2L81 71l6.2-2.8Z" fill="#B8DABB" stroke="#EFF8F0" stroke-width="1.5"/>
+  </g>
+</svg>

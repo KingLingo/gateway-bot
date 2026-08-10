@@ -32,12 +32,13 @@ describe('Gateway Bot home experience', () => {
 
   it('splits the Chinese hero into an accessible asymmetric editorial composition', () => {
     expect(source).toContain('<h1 class="hero-title" :aria-label="t(\'home.title\')">')
-    expect(source).toContain('class="hero-title-lead"')
-    expect(source).toContain('class="hero-title-reach"')
-    expect(source).toContain('class="hero-title-near"')
+    expect(source).toContain('<span class="hero-title-lead" aria-hidden="true">让 AI 接入</span>')
+    expect(source).toContain('<span class="hero-title-reach">触手</span>')
+    expect(source).toContain('<span class="hero-title-near">可及</span>')
+    expect(source).toMatch(/\.hero-title\s*\{[^}]*display:\s*grid;/s)
+    expect(source).toMatch(/\.hero-title-art\s*\{[^}]*display:\s*flex;[^}]*justify-self:\s*end;[^}]*white-space:\s*nowrap;/s)
     expect(source).toMatch(/\.hero-title-reach\s*\{[^}]*font-family:\s*"Songti SC", "STSong", "Noto Serif SC", serif;/s)
     expect(source).toMatch(/\.hero-title-near\s*\{[^}]*font-family:\s*"Kaiti SC", "STKaiti", "Noto Serif SC", serif;/s)
-    expect(source).toMatch(/\.hero-title-art\s*\{[^}]*white-space:\s*nowrap;/s)
   })
 
   it('keeps the subscription photo caption readable over variable imagery', () => {

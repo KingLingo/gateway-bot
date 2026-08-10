@@ -115,6 +115,19 @@ describe('Gateway Bot public brand', () => {
     }
   })
 
+  it('uses a compact neural-route favicon without neural nodes', () => {
+    const index = readFileSync(resolve(repoRoot, 'frontend/index.html'), 'utf8')
+
+    expect(index).toContain('<link rel="icon" type="image/svg+xml" href="/favicon.svg" />')
+
+    const favicon = readFileSync(resolve(repoRoot, 'frontend/public/favicon.svg'), 'utf8')
+    expect(favicon).toContain('viewBox="0 0 128 128"')
+    expect(favicon).toContain('class="gateway-frame"')
+    expect(favicon).toContain('class="route"')
+    expect(favicon).toContain('class="ai-spark"')
+    expect(favicon).not.toContain('class="neural-node"')
+  })
+
   it('uses the Apple-native type stack and cold silver Apple Glass tokens', () => {
     const styles = readFileSync(resolve(srcRoot, 'style.css'), 'utf8')
     const tailwind = readFileSync(resolve(repoRoot, 'frontend/tailwind.config.js'), 'utf8')
