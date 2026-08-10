@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
   <title id="title">Gateway Bot</title>
-  <desc id="desc">An original mark with gateway frames, a routing path, and an online status point.</desc>
+  <desc id="desc">An original mark with gateway frames, neural routing nodes, and an AI spark.</desc>
   <defs>
     <linearGradient id="surface" x1="18" y1="16" x2="110" y2="114" gradientUnits="userSpaceOnUse">
       <stop stop-color="#32383E"/>
@@ -16,5 +16,9 @@
   <path d="M35 34h31c6.1 0 11 4.9 11 11v18" fill="none" stroke="#DCE1E5" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/>
   <path d="M93 94H62c-6.1 0-11-4.9-11-11V65" fill="none" stroke="#77818A" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/>
   <path d="M45 48c0-4.4 3.6-8 8-8h12c4.4 0 8 3.6 8 8v16c0 4.4 3.6 8 8 8h2" fill="none" stroke="url(#route)" stroke-linecap="round" stroke-linejoin="round" stroke-width="6"/>
-  <circle cx="90" cy="72" r="8" fill="#A6CBAA" stroke="#E6F2E8" stroke-width="3"/>
+  <circle class="neural-node" cx="60" cy="40" r="3.2" fill="#B8DABB" stroke="#EFF8F0" stroke-width="1.5"/>
+  <circle class="neural-node" cx="73" cy="58" r="3.2" fill="#B8DABB" stroke="#EFF8F0" stroke-width="1.5"/>
+  <g class="ai-spark">
+    <path d="m90 62 2.8 6.2L99 71l-6.2 2.8L90 80l-2.8-6.2L81 71l6.2-2.8Z" fill="#B8DABB" stroke="#EFF8F0" stroke-width="1.5"/>
+  </g>
 </svg>

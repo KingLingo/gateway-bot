@@ -70,7 +70,13 @@
 
         <div class="hero-content">
           <div class="hero-copy">
-            <h1>{{ t('home.title') }}</h1>
+            <h1 class="hero-title" :aria-label="t('home.title')">
+              <span class="hero-title-lead" aria-hidden="true">让 AI 接入</span>
+              <span class="hero-title-art" aria-hidden="true">
+                <span class="hero-title-reach">触手</span>
+                <span class="hero-title-near">可及</span>
+              </span>
+            </h1>
             <p>{{ t('home.description') }}</p>
             <div class="hero-actions">
               <RouterLink :to="dashboardPath" class="hero-primary">
@@ -113,9 +119,9 @@
       <section class="subscription-section home-section">
         <div class="subscription-image">
           <img src="/images/gateway-access-detail.jpg" alt="玻璃建筑通道细节" loading="lazy" />
-          <span>{{ t('home.subscription.imageCaption') }}</span>
+          <span class="subscription-caption">{{ t('home.subscription.imageCaption') }}</span>
         </div>
-        <div class="subscription-copy glass-emphasis">
+        <div class="subscription-copy">
           <h2>{{ t('home.subscription.title') }}</h2>
           <p>{{ t('home.subscription.description') }}</p>
           <dl>
@@ -310,7 +316,11 @@ onMounted(() => {
 .hero-grain { z-index: 2; opacity: 0.16; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.38'/%3E%3C/svg%3E"); mix-blend-mode: soft-light; }
 .hero-content { position: relative; z-index: 3; display: grid; width: 100%; grid-template-columns: minmax(0, 1fr); align-items: end; padding: 8.5rem 8vw 6rem; }
 .hero-copy { max-width: 760px; animation: hero-enter 700ms cubic-bezier(.2,.7,.2,1) both; }
-.hero-copy h1 { max-width: 10ch; font-size: clamp(3.4rem, 6.2vw, 6.4rem); font-weight: 560; line-height: 1.08; letter-spacing: 0; }
+.hero-title { display: grid; width: min(100%, 9.4em); font-size: clamp(3.4rem, 6.2vw, 6.4rem); font-weight: 560; line-height: 1.08; letter-spacing: 0; }
+.hero-title-lead { justify-self: start; white-space: nowrap; }
+.hero-title-art { display: flex; justify-self: end; align-items: baseline; gap: 0.16em; white-space: nowrap; transform: translateX(0.22em); }
+.hero-title-reach { color: #f2f4f5; font-family: "Songti SC", "STSong", "Noto Serif SC", serif; font-weight: 700; letter-spacing: -0.12em; }
+.hero-title-near { color: #a6cbaa; font-family: "Kaiti SC", "STKaiti", "Noto Serif SC", serif; font-weight: 600; letter-spacing: -0.08em; transform: translateY(0.08em) rotate(-2deg); }
 .hero-copy p { margin-top: 1.5rem; max-width: 34rem; color: #b2bbc3; font-size: clamp(1rem, 1.35vw, 1.2rem); line-height: 1.75; }
 .hero-actions { margin-top: 2rem; flex-wrap: wrap; gap: 0.75rem; }
 .hero-primary, .hero-secondary { min-height: 44px; border-radius: 6px; padding: 0.7rem 1.1rem; font-size: 0.9rem; font-weight: 650; }
@@ -332,12 +342,39 @@ onMounted(() => {
 .access-path p { margin-top: 0.5rem; color: #94a198; }
 .step-arrow { margin-top: 0.25rem; color: #4a5850; }
 
-.subscription-section { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(340px, 0.88fr); gap: 8vw; align-items: center; background: #0b0d0f; color: #f5f7f8; }
+.subscription-section { display: grid; grid-template-columns: minmax(0, 1.22fr) minmax(340px, 0.78fr); gap: 8vw; align-items: center; background: #0b0d0f; color: #f5f7f8; }
 .subscription-image { position: relative; min-height: 560px; overflow: hidden; border-radius: 8px; }
 .subscription-image::after { position: absolute; inset: 0; content: ''; background: linear-gradient(0deg, rgb(15 21 18 / 0.68), transparent 48%); }
 .subscription-image img { position: absolute; inset: 0; height: 100%; width: 100%; object-fit: cover; filter: saturate(0.45) sepia(0.16) hue-rotate(70deg); }
-.subscription-image span { position: absolute; z-index: 1; right: 1.5rem; bottom: 1.5rem; left: 1.5rem; color: #e4e3dd; font-size: 0.78rem; }
-.subscription-copy { padding: clamp(1.5rem, 3vw, 2.5rem); border-radius: 8px; }
+.subscription-caption {
+  position: absolute;
+  z-index: 2;
+  bottom: 1.25rem;
+  left: 1.25rem;
+  display: inline-flex;
+  max-width: calc(100% - 2.5rem);
+  align-items: center;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-radius: 999px;
+  padding: 0.65rem 0.9rem;
+  background: rgb(11 13 15 / 0.78);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12), 0 8px 24px rgb(0 0 0 / 0.2);
+  color: #f5f7f8;
+  backdrop-filter: blur(14px) saturate(1.15);
+  font-size: 0.9rem;
+  font-weight: 560;
+  line-height: 1.4;
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+}
+.subscription-copy {
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 8px;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  background: rgb(20 24 28 / 0.82);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 24px 60px rgb(0 0 0 / 0.22);
+  backdrop-filter: blur(22px) saturate(1.08);
+  -webkit-backdrop-filter: blur(22px) saturate(1.08);
+}
 .subscription-copy > p { color: #9da6ae; }
 .subscription-copy dl { margin-top: 3rem; border-top: 1px solid #32393f; }
 .subscription-copy dl div { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid #32393f; padding: 1rem 0; }
@@ -346,6 +383,7 @@ onMounted(() => {
 .text-link { margin-top: 2rem; gap: 0.5rem; color: #c5d8c7; font-weight: 650; }
 
 .models-section { background: #0b0d0f; }
+.models-section > h2 { transform: translateX(0.8rem); }
 .models-section > p { color: #9da6ae; }
 .model-rail { display: grid; grid-template-columns: 1.15fr .85fr 1.45fr; margin-top: 4rem; border: 1px solid #32393f; border-radius: 8px; overflow: hidden; }
 .model-identity, .model-coming-soon { display: flex; align-items: center; gap: 0.75rem; min-height: 104px; padding: 1.5rem; font-size: 1.1rem; font-weight: 620; }
@@ -355,6 +393,7 @@ onMounted(() => {
 .model-coming-soon { color: #9da6ae; font-size: .875rem; font-weight: 500; }
 
 .visibility-section { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 9vw; background: #14181c; }
+.visibility-section > div:first-child { transform: translateX(-0.8rem); }
 .visibility-ledger { border-top: 1px solid #32393f; }
 .visibility-ledger > div { display: grid; grid-template-columns: 2rem 1fr; column-gap: 1rem; border-bottom: 1px solid #32393f; padding: 1.5rem 0; }
 .visibility-ledger svg { grid-row: 1 / span 2; color: #a5c1a9; }
@@ -376,14 +415,18 @@ onMounted(() => {
   .hero-section { min-height: 94dvh; }
   .hero-scrim { background: linear-gradient(0deg, rgb(15 21 18 / 0.98) 0%, rgb(15 21 18 / 0.8) 58%, rgb(15 21 18 / 0.38) 100%); }
   .hero-content { display: block; padding: 8rem 1.25rem 8.5rem; }
-  .hero-copy h1 { max-width: 8ch; font-size: clamp(3rem, 15vw, 4.7rem); }
+  .hero-title { width: min(100%, 8.8em); font-size: clamp(3rem, 15vw, 4.7rem); }
+  .hero-title-art { transform: translateX(0.06em); }
+  .hero-title-near { transform: translateY(0.04em) rotate(-1deg); }
   .hero-copy p { max-width: 22rem; font-size: 0.98rem; }
   .home-section { padding: 5rem 1.25rem; }
   .access-path { margin-top: 3rem; }
   .access-path li { grid-template-columns: 2.5rem 1fr; gap: 0.75rem; }
   .step-arrow { display: none; }
   .subscription-section, .visibility-section { grid-template-columns: 1fr; gap: 3.5rem; }
+  .models-section > h2, .visibility-section > div:first-child { transform: none; }
   .subscription-image { min-height: 420px; order: 2; }
+  .subscription-caption { bottom: 1rem; left: 1rem; max-width: calc(100% - 2rem); }
   .model-rail { grid-template-columns: 1fr; margin-right: 0; }
   .model-identity, .model-coming-soon { min-height: 76px; padding: 1.1rem 1.25rem; }
   .model-identity + .model-identity, .model-coming-soon { border-top: 1px solid #32393f; border-left: 0; }

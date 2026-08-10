@@ -89,7 +89,7 @@ describe('Gateway Bot public brand', () => {
     expect(sidebar).not.toContain("import VersionBadge")
   })
 
-  it('ships the original gateway-frame mark and reuses it for every default shell logo', () => {
+  it('ships the original neural-route gateway mark and reuses it for every default shell logo', () => {
     const logo = readFileSync(resolve(repoRoot, 'frontend/public/logo.svg'), 'utf8')
     const brand = readFileSync(resolve(srcRoot, 'components/brand/GatewayBrand.vue'), 'utf8')
     const defaultBrandShells = [
@@ -102,7 +102,10 @@ describe('Gateway Bot public brand', () => {
     ]
 
     expect(logo).toContain('<title id="title">Gateway Bot</title>')
-    expect(logo).toContain('gateway frames, a routing path, and an online status point')
+    expect(logo).toContain('class="neural-node"')
+    expect(logo).toContain('class="ai-spark"')
+    expect(logo).toContain('gateway frames, neural routing nodes, and an AI spark')
+    expect(logo).not.toMatch(/robot|chat bubble|Gemini|Grok/i)
     expect(logo).not.toContain('Sub2API')
     expect(brand).toContain("src=\"/logo.svg\"")
     expect(brand).toContain('v-if="logo"')
